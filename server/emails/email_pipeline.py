@@ -1,3 +1,4 @@
+import os
 import resend
 import logging
 from datetime import datetime
@@ -6,7 +7,7 @@ from pathlib import Path
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-resend.api_key = "re_5aoSna6C_7WnebHf7VeVbsD5EygtFzZJH"
+resend.api_key = os.getenv("RESEND_API_KEY")
 
 
 def build_news_cards(summarized_articles):
@@ -55,5 +56,5 @@ def email_service_pipeline(summarized_articles):
     try:
         send_newsletter("chaitanyarudraraju5210@gmail.com", summarized_articles)
     except Exception as e:
-        logger.exception("Email pipeline Failed with Exception : {e}")
+        logger.exception("Email pipeline Failed with Exception")
         raise

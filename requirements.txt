@@ -2,3 +2,4 @@ requests
 python-dotenv
 sqlite3
 groq
+resend

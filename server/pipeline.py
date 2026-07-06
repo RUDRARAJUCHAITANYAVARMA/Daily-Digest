@@ -30,7 +30,7 @@ def pipeline():
         logger.info(
             "[Stage 1] Fetching top headlines for %s...", date.strftime("%Y-%m-%d")
         )
-        news = get_top_headlines(date)
+        news = get_top_headlines(date.strftime("%Y-%m-%d"))
         logger.info("[Stage 1] Retrieved %d news articles.", len(news))
 
         # Stage 2: Initialize database
@@ -71,7 +71,7 @@ def pipeline():
         logger.info("=" * 60)
 
     except Exception as e:
-        logger.exception("Pipeline Failed with Exception : {e}")
+        logger.exception("Pipeline Failed with Exception")
         raise
 
 
