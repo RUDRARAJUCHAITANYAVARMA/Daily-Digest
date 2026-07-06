@@ -1,184 +1,247 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
 
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Global Brief</title>
 
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    <style type="text/css">
+        /* Core email-client overrides & typography fallbacks */
+        body,
+        table,
+        td,
+        a {
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }
+
+        table,
+        td {
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }
+
+        img {
+            -ms-interpolation-mode: bicubic;
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+        }
+
+        table {
+            border-collapse: collapse !important;
         }
 
         body {
-            background: #f4f6fb;
-            font-family: Arial, Helvetica, sans-serif;
-            padding: 40px 20px;
-            color: #1f2937;
+            height: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            background-color: #f6f5f2;
         }
 
-        .container {
-            max-width: 760px;
-            margin: auto;
-            background: #ffffff;
-            border-radius: 14px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        /* 
+      UNIVERSAL INJECTED ELEMENT FORMATTING 
+      This ensures that whatever dynamic content is dumped into {{NEWS_CONTENT}} 
+      automatically inherits gorgeous, airy, non-dense editorial styling.
+    */
+        .news-container h1,
+        .news-container h2,
+        .news-container h3 {
+            font-family: Georgia, 'Times New Roman', Times, serif !important;
+            font-weight: 700 !important;
+            color: #111111 !important;
+            font-size: 21px !important;
+            line-height: 1.4 !important;
+            margin-top: 32px !important;
+            margin-bottom: 12px !important;
+            padding: 0 !important;
+            letter-spacing: -0.2px !important;
         }
 
-        /* Header */
-
-        .header {
-            background: linear-gradient(135deg, #0f172a, #1e3a8a);
-            color: white;
-            text-align: center;
-            padding: 50px 35px;
+        /* Make the first headline in a container slightly smaller if it sits next to a tag */
+        .news-container h2:first-child,
+        .news-container h3:first-child {
+            margin-top: 4px !important;
         }
 
-        .header h1 {
-            font-size: 40px;
-            font-weight: 700;
-            margin-bottom: 12px;
+        .news-container p {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+            font-size: 14.5px !important;
+            line-height: 1.75 !important;
+            color: #444444 !important;
+            margin-top: 0 !important;
+            margin-bottom: 22px !important;
+            font-weight: 300 !important;
         }
 
-        .tagline {
-            color: #dbeafe;
-            font-size: 18px;
-            margin-bottom: 18px;
-            line-height: 1.5;
-        }
-
-        .date {
-            color: #bfdbfe;
-            font-size: 14px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        /* News Section */
-
-        .news {
-            padding: 35px;
-        }
-
-        .card {
-            padding: 24px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .card:last-child {
-            border-bottom: none;
-        }
-
-        .card h2 {
-            font-size: 22px;
-            color: #111827;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-
-        .card p {
-            font-size: 16px;
-            color: #4b5563;
-            line-height: 1.8;
-        }
-
-        /* Footer */
-
-        .footer {
-            background: #f8fafc;
-            border-top: 1px solid #e5e7eb;
-            text-align: center;
-            padding: 28px;
-        }
-
-        .footer p {
-            color: #6b7280;
-            font-size: 14px;
-        }
-
-        .footer strong {
-            color: #111827;
-        }
-
-        /* Mobile */
-
-        @media only screen and (max-width:600px) {
-
-            body {
-                padding: 12px;
+        /* Mobile Responsive Optimizations */
+        @media only screen and (max-width: 600px) {
+            .email-container {
+                width: 100% !important;
+                max-width: 100% !important;
+                border-radius: 0px !important;
+                border-left: none !important;
+                border-right: none !important;
             }
 
-            .header {
-                padding: 40px 24px;
+            .padded-inner {
+                padding: 32px 20px !important;
             }
 
-            .header h1 {
-                font-size: 30px;
+            .masthead-title {
+                font-size: 40px !important;
+                line-height: 1.15 !important;
             }
 
-            .tagline {
-                font-size: 16px;
+            .meta-block {
+                display: block !important;
+                width: 100% !important;
+                text-align: left !important;
+                padding-top: 8px;
             }
-
-            .news {
-                padding: 24px;
-            }
-
-            .card h2 {
-                font-size: 20px;
-            }
-
-            .card p {
-                font-size: 15px;
-            }
-
         }
     </style>
-
 </head>
 
-<body>
+<body
+    style="margin: 0; padding: 40px 10px; background-color: #f6f5f2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
 
-    <div class="container">
+    <!-- Main Centered Wrapper -->
+    <table border="0" cellpadding="0" cellspacing="0" width="100%"
+        style="table-layout: fixed; background-color: #f6f5f2;">
+        <tr>
+            <td align="center" valign="top">
 
-        <!-- Header -->
+                <!-- 600px Wide Master Container -->
+                <table border="0" cellpadding="0" cellspacing="0" class="email-container" width="600"
+                    style="max-width: 600px; background-color: #ffffff; border-radius: 16px; border: 1px solid #e2e1dd; box-shadow: 0 4px 24px rgba(0,0,0,0.03); overflow: hidden;">
 
-        <div class="header">
+                    <!-- Editorial Top Accent Color Line -->
+                    <tr>
+                        <td height="5" style="background-color: #7c2d12; line-height: 5px; font-size: 1px;">&nbsp;</td>
+                    </tr>
 
-            <h1>The Morning Brief</h1>
+                    <!-- Masthead Section -->
+                    <tr>
+                        <td class="padded-inner" style="padding: 44px 48px 36px 48px;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <!-- Clean premium Masthead with Georgia Serif (Email-safe & authoritative) -->
+                                    <td align="center" class="masthead-title"
+                                        style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 48px; font-weight: 700; color: #111111; letter-spacing: -1.5px; line-height: 1.1; margin: 0; padding-bottom: 8px;">
+                                        Global Brief
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <!-- Elegant subtitle matching the editorial tone -->
+                                    <td align="center"
+                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 400; color: #555555; letter-spacing: 0.5px; padding-bottom: 28px; line-height: 1.4;">
+                                        Insights that matter, curated for absolute focus.
+                                    </td>
+                                </tr>
 
-            <div class="tagline">
-                10 stories that matter. Curated for your morning.
-            </div>
+                                <!-- Double Thin Rules with Dynamic Dateline - Softened to elegant, faint gray hairline borders -->
+                                <tr>
+                                    <td
+                                        style="border-top: 1px solid #e5e5e0; border-bottom: 1px solid #e5e5e0; padding: 12px 0;">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <!-- Dynamic Date Placeholder using clean system Sans-Serif -->
+                                                <td valign="middle"
+                                                    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 700; color: #111111; letter-spacing: 1px; text-transform: uppercase;">
+                                                    DATE: <span
+                                                        style="font-weight: 500; color: #555555;">{{DATE}}</span>
+                                                </td>
+                                                <!-- Clean static tag with high-contrast letters -->
+                                                <td align="right" valign="middle" class="meta-block"
+                                                    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 700; color: #7c2d12; letter-spacing: 1.5px; text-transform: uppercase;">
+                                                    GLOBAL BRIEFINGS
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-            <div class="date">
-                {{DATE}}
-            </div>
+                    <!-- PRIMARY HERO SECTION -->
+                    <tr>
+                        <td class="padded-inner" style="padding: 12px 48px 32px 48px;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <!-- Category Kicker -->
+                                    <td
+                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #7c2d12; padding-bottom: 14px;">
+                                        <span style="background-color: #fdf2f0; padding: 4px 8px; border-radius: 4px;">★
+                                            TODAY'S FOCUS</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <!-- Dynamic Hero Injection Spot - Wrapped in 'news-container' to safely format elements -->
+                                    <td class="news-container"
+                                        style="font-family: Georgia, 'Times New Roman', Times, serif;">
+                                        {{NEWS_CONTENT_HERO}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-        </div>
+                    <!-- SECONDARY STORIES SECTION -->
+                    <tr>
+                        <td class="padded-inner" style="padding: 16px 48px 48px 48px;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <!-- Secondary Catalog Injection Spot with ultra-clean, highly readable system font -->
+                                    <td class="news-container">
+                                        {{NEWS_CONTENT}}
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-        <!-- Dynamic News Cards -->
+                    <!-- FOOTER PANEL -->
+                    <tr>
+                        <td class="padded-inner"
+                            style="padding: 36px 48px; background-color: #faf9f6; border-top: 1px solid #e2e1dd;">
+                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                <tr>
+                                    <td align="center"
+                                        style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 17px; font-weight: 700; color: #111111; padding-bottom: 10px;">
+                                        About Global Brief
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center"
+                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.8; color: #555555; padding-bottom: 24px; font-weight: 300;">
+                                        We bring you synthesis instead of noise. Our summaries are curated cleanly to
+                                        keep your mental space free from distracting ads, algorithms, and cookies. Thank
+                                        you for reading.
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center"
+                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; color: #888888; line-height: 1.5; font-weight: 400;">
+                                        Made with ❤️ by indie developer <strong
+                                            style="color: #7c2d12; font-weight: 600;">Chaitanya Varma Rudraraju</strong>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
 
-        <div class="news">
+                </table>
 
-            {{NEWS_CONTENT}}
-
-        </div>
-
-        <!-- Footer -->
-
-        <div class="footer">
-
-            <p>
-                Made with ❤️ by indie developer
-                <strong>Chaitanya Varma Rudraraju</strong>
-            </p>
-
-        </div>
-
-    </div>
+            </td>
+        </tr>
+    </table>
 
 </body>
 

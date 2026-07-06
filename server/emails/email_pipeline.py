@@ -15,7 +15,7 @@ def build_news_cards(summarized_articles):
     for index, article in enumerate(summarized_articles.values(), start=1):
         cards += f"""
         <div class="card">
-            <h2>{index}. {article['title']}</h2>
+            <h2>{article['title']}</h2>
             <p>{article['summary']}</p>
         </div>
         """
