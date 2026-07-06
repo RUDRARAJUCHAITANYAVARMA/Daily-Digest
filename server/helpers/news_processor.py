@@ -19,15 +19,19 @@ def clean_news_data(news):
     news_data = []
     try:
         for article in news:
+            title = article.get("title")
+            content = article.get("content")
+            if not title or not content or "[Removed]" in title:
+                continue
             news_data.append(
                 {
-                    "title": article.get("title"),
+                    "title": title,
                     "description": article.get("description"),
-                    "content": article.get("content"),
+                    "content": content,
                 }
             )
     except Exception as e:
-        logger.exception(f"Failed to store news in database : {e}")
+        logger.exception("Failed to clean news data")
         raise
 
     return news_data

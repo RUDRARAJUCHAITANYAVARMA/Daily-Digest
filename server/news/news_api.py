@@ -25,4 +25,4 @@ def get_top_headlines(date):
     if response.status_code == 200:
         return response.json()["articles"]
     else:
-        return f"Failed to fetch news with exception {response.json()['message']}"
+        raise Exception(f"Failed to fetch news: {response.json().get('message', 'Unknown error')}")
