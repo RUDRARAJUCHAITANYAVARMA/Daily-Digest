@@ -5,6 +5,8 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="supported-color-schemes" content="dark" />
     <title>Global Brief</title>
 
     <style type="text/css">
@@ -41,29 +43,32 @@
             margin: 0 !important;
             padding: 0 !important;
             width: 100% !important;
-            background-color: #020202;
+            background-color: #050506;
         }
 
-        /* 
-          UNIVERSAL INJECTED ELEMENT FORMATTING 
-          This ensures that whatever dynamic content is dumped into {{NEWS_CONTENT}} 
-          automatically inherits gorgeous, airy, non-dense editorial styling.
+        a {
+            color: #d0d0d5;
+        }
+
+        /*
+          UNIVERSAL INJECTED ELEMENT FORMATTING
+          Whatever dynamic content lands in {{NEWS_CONTENT}} / {{NEWS_CONTENT_HERO}}
+          inherits this styling automatically.
         */
         .news-container h1,
         .news-container h2,
         .news-container h3 {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-            font-weight: 700 !important;
-            color: #ffffff !important;
-            font-size: 22px !important;
+            font-weight: 600 !important;
+            color: #f5f5f7 !important;
+            font-size: 21px !important;
             line-height: 1.35 !important;
-            margin-top: 32px !important;
-            margin-bottom: 12px !important;
+            margin-top: 28px !important;
+            margin-bottom: 10px !important;
             padding: 0 !important;
-            letter-spacing: -0.5px !important;
+            letter-spacing: -0.2px !important;
         }
 
-        /* Make the first headline in a container sit closer to its tag/badge */
         .news-container h2:first-child,
         .news-container h3:first-child {
             margin-top: 4px !important;
@@ -73,12 +78,44 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
             font-size: 14px !important;
             line-height: 1.7 !important;
-            color: #a1a1aa !important;
-            /* Sophisticated silver-gray body text to prevent harsh contrast */
+            color: #9c9ca3 !important;
             margin-top: 0 !important;
-            margin-bottom: 24px !important;
+            margin-bottom: 18px !important;
             font-weight: 400 !important;
             letter-spacing: 0.1px !important;
+        }
+
+        /* Small category/kicker tag that can be dropped above a headline, e.g. <span class="tag">MARKETS</span> */
+        .news-container .tag {
+            display: inline-block;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            color: #7a7a82 !important;
+            letter-spacing: 1.2px !important;
+            text-transform: uppercase !important;
+            margin-bottom: 6px !important;
+        }
+
+        /* "Read more" link style for injected content */
+        .news-container .read-more {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            color: #d0d0d5 !important;
+            text-decoration: underline !important;
+            letter-spacing: 0.1px !important;
+            display: inline-block;
+            margin-top: -6px;
+            margin-bottom: 22px;
+        }
+
+        /* Divider between stacked stories inside {{NEWS_CONTENT}} */
+        .news-container .story-divider {
+            border-top: 1px solid #1e1e21;
+            line-height: 1px;
+            font-size: 1px;
+            margin: 4px 0 26px 0;
         }
 
         /* Mobile Responsive Optimizations */
@@ -91,71 +128,91 @@
             }
 
             .padded-inner {
-                padding: 32px 20px !important;
+                padding: 30px 20px !important;
             }
 
             .masthead-title {
-                font-size: 38px !important;
+                font-size: 30px !important;
             }
 
             .meta-block {
                 display: block !important;
                 width: 100% !important;
                 text-align: left !important;
-                padding-top: 8px;
+                padding-top: 10px;
+            }
+
+            .news-container h1,
+            .news-container h2,
+            .news-container h3 {
+                font-size: 19px !important;
             }
         }
     </style>
 </head>
 
 <body
-    style="margin: 0; padding: 40px 10px; background-color: #020202; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+    style="margin: 0; padding: 40px 10px; background-color: #050506; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
 
-    <!-- Main Centered Wrapper -->
+    <!-- Preheader: hidden preview text shown in inbox list, not in the body -->
+    <div
+        style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#050506;">
+        {{PREHEADER_TEXT}}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+    </div>
+
     <table border="0" cellpadding="0" cellspacing="0" width="100%"
-        style="table-layout: fixed; background-color: #020202;">
+        style="table-layout: fixed; background-color: #050506;">
         <tr>
             <td align="center" valign="top">
 
-                <!-- 600px Wide Master Container (Strict Monochromatic Pitch Black) -->
+                <!-- View in browser -->
+                <table border="0" cellpadding="0" cellspacing="0" width="600" style="max-width: 600px;">
+                    <tr>
+                        <td align="center" style="padding: 0 0 14px 0;">
+                            <a href="{{VIEW_IN_BROWSER_URL}}"
+                                style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; color: #52525b; letter-spacing: 0.3px; text-decoration: none;">
+                                View in browser
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- 600px Wide Master Container -->
                 <table border="0" cellpadding="0" cellspacing="0" class="email-container" width="600"
-                    style="max-width: 600px; background-color: #0c0c0d; border: 1px solid #1c1c1e; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.6);">
+                    style="max-width: 600px; background-color: #0d0d0f; border: 1px solid #1e1e21; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.6);">
 
                     <!-- Masthead Section -->
                     <tr>
                         <td class="padded-inner" style="padding: 48px 40px 28px 40px;">
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
-                                    <!-- Clean high-contrast premium Masthead -->
                                     <td align="left" class="masthead-title"
-                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 44px; font-weight: 800; color: #ffffff; letter-spacing: -1.5px; line-height: 1.05; margin: 0; padding-bottom: 8px; text-transform: uppercase;">
+                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 34px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px; line-height: 1.2; padding-bottom: 8px;">
                                         Global Brief
                                     </td>
                                 </tr>
                                 <tr>
-                                    <!-- Elegant, low-contrast tagline -->
                                     <td align="left"
                                         style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 400; color: #71717a; letter-spacing: 0.1px; padding-bottom: 28px; line-height: 1.4;">
                                         Insights that matter, curated for absolute focus.
                                     </td>
                                 </tr>
 
-                                <!-- Double Thin Rules with Dynamic Dateline - Clean monochromatic hairlines -->
+                                <!-- Dateline -->
                                 <tr>
                                     <td
-                                        style="border-top: 1px solid #1c1c1e; border-bottom: 1px solid #1c1c1e; padding: 14px 0;">
+                                        style="border-top: 1px solid #1e1e21; border-bottom: 1px solid #1e1e21; padding: 14px 0;">
                                         <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                             <tr>
-                                                <!-- Dynamic Date Placeholder in clean stark monospace/sans style -->
                                                 <td valign="middle"
-                                                    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 700; color: #ffffff; letter-spacing: 1.5px; text-transform: uppercase;">
-                                                    DATE: <span
-                                                        style="font-weight: 500; color: #a1a1aa;">{{DATE}}</span>
+                                                    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 600; color: #d4d4d8; letter-spacing: 0.5px;">
+                                                    {{DATE}} <span style="color: #3f3f46;">&middot;</span> <span
+                                                        style="font-weight: 400; color: #71717a;">Issue
+                                                        {{ISSUE_NO}}</span>
                                                 </td>
-                                                <!-- Clean static category tracker -->
                                                 <td align="right" valign="middle" class="meta-block"
-                                                    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 700; color: #ffffff; letter-spacing: 2px; text-transform: uppercase;">
-                                                    GLOBAL BRIEFINGS
+                                                    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 600; color: #52525b; letter-spacing: 1.5px; text-transform: uppercase;">
+                                                    Global Briefings
                                                 </td>
                                             </tr>
                                         </table>
@@ -167,26 +224,24 @@
 
                     <!-- PRIMARY HERO SECTION -->
                     <tr>
-                        <td class="padded-inner" style="padding: 12px 40px 24px 40px;">
+                        <td class="padded-inner" style="padding: 14px 40px 22px 40px;">
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
-                                    <!-- Monochromatic Capsule Badge (Matching Screenshot 2026-07-06 at 5.07.36 PM.png) -->
-                                    <td style="padding-bottom: 16px;">
-                                        <table border="0" cellpadding="0" cellspacing="0">
-                                            <tr>
-                                                <td align="center"
-                                                    style="background-color: #1c1c1e; border: 1px solid #2d2d30; padding: 5px 12px; border-radius: 20px;">
-                                                    <span
-                                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 9px; font-weight: 700; color: #ffffff; letter-spacing: 1px; text-transform: uppercase; display: inline-block;">
-                                                        ★ Today's Focus
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                    <td
+                                        style="padding-bottom: 12px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 700; color: #71717a; letter-spacing: 1.5px; text-transform: uppercase;">
+                                        Top Story
                                     </td>
                                 </tr>
                                 <tr>
-                                    <!-- Dynamic Hero Injection Spot - Configured for dark-theme text styling -->
+                                    <!-- Optional hero image. Leave {{NEWS_HERO_IMAGE_URL}} empty to omit. -->
+                                    <td style="padding-bottom: 4px;">
+                                        <!--[if !mso]><!-->
+                                        <img src="{{NEWS_HERO_IMAGE_URL}}" alt="{{NEWS_HERO_IMAGE_ALT}}" width="520"
+                                            style="display:block; width:100%; max-width:520px; height:auto; border-radius: 10px; margin-bottom: 6px;" />
+                                        <!--<![endif]-->
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td class="news-container">
                                         {{NEWS_CONTENT_HERO}}
                                     </td>
@@ -195,12 +250,12 @@
                         </td>
                     </tr>
 
-                    <!-- Secondary layout separator line -->
+                    <!-- Section separator -->
                     <tr>
                         <td style="padding: 0 40px;">
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
-                                    <td style="border-bottom: 1px solid #1c1c1e; line-height: 1px; font-size: 1px;">
+                                    <td style="border-bottom: 1px solid #1e1e21; line-height: 1px; font-size: 1px;">
                                         &nbsp;</td>
                                 </tr>
                             </table>
@@ -209,10 +264,23 @@
 
                     <!-- SECONDARY STORIES SECTION -->
                     <tr>
-                        <td class="padded-inner" style="padding: 24px 40px 48px 40px;">
+                        <td class="padded-inner" style="padding: 26px 40px 20px 40px;">
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
-                                    <!-- Secondary Dynamic Injection Spot with clean, high-contrast settings -->
+                                    <td align="left"
+                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 700; color: #71717a; letter-spacing: 1.5px; text-transform: uppercase; padding-bottom: 18px;">
+                                        More Stories
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <!--
+                                        Each story dropped into {{NEWS_CONTENT}} can optionally use:
+                                        <span class="tag">CATEGORY</span>
+                                        <h2>Headline</h2>
+                                        <p>Summary paragraph...</p>
+                                        <a class="read-more" href="...">Read more</a>
+                                        <div class="story-divider"></div>
+                                    -->
                                     <td class="news-container">
                                         {{NEWS_CONTENT}}
                                     </td>
@@ -224,27 +292,34 @@
                     <!-- FOOTER PANEL -->
                     <tr>
                         <td class="padded-inner"
-                            style="padding: 44px 40px; background-color: #080809; border-top: 1px solid #1c1c1e;">
+                            style="padding: 40px 40px 44px 40px; background-color: #08080a; border-top: 1px solid #1e1e21;">
                             <table border="0" cellpadding="0" cellspacing="0" width="100%">
                                 <tr>
                                     <td align="left"
-                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; color: #ffffff; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 1.5px;">
+                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; color: #f5f5f7; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 1.2px;">
                                         About Global Brief
                                     </td>
                                 </tr>
                                 <tr>
                                     <td align="left"
-                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.8; color: #71717a; padding-bottom: 28px; font-weight: 400; letter-spacing: 0.1px;">
+                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.8; color: #71717a; padding-bottom: 22px; font-weight: 400; letter-spacing: 0.1px;">
                                         We bring you synthesis instead of noise. Our summaries are curated cleanly to
                                         keep your mental space free from distracting ads, algorithms, and cookies. Thank
                                         you for reading.
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td align="left"
-                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; color: #52525b; line-height: 1.5; font-weight: 400; text-transform: uppercase; letter-spacing: 0.5px;">
-                                        Made with ❤️ by indie developer <strong
-                                            style="color: #ffffff; font-weight: 600;">Chaitanya Varma Rudraraju</strong>
+                                    <td style="border-top: 1px solid #1e1e21; padding-top: 18px;">
+                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                            <tr>
+                                                <td align="left"
+                                                    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; color: #52525b; text-transform: uppercase; letter-spacing: 0.5px;">
+                                                    Made with &#10084;&#65039; by indie developer
+                                                    <strong style="color: #f5f5f7; font-weight: 600;">Chaitanya Varma
+                                                        Rudraraju</strong>
+                                                </td>
+                                            </tr>
+                                        </table>
                                     </td>
                                 </tr>
                             </table>
