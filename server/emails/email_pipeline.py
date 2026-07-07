@@ -42,7 +42,7 @@ def send_newsletter(receiver_email: str, summarized_articles):
 
     resend.Emails.send(
         {
-            "from": "The Morning Brief <onboarding@resend.dev>",
+            "from": "The Morning Brief <newsletter@dailydigest.in>",
             "to": receiver_email,
             "subject": "📰 The Morning Brief",
             "html": html,
