@@ -5,42 +5,43 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def clean_news_data(news):
-    """
-    Helps in cleaning the news data
+def clean_news_data(news: list) -> list:
+    """Clean the raw news data by filtering out removed or incomplete articles.
 
     Args:
-        news (list): List of news articles
+        news (list): List of raw news articles.
 
     Returns:
-        list: List of cleaned news articles
+        list: List of cleaned news articles.
     """
 
-    news_data = []
     try:
-        for article in news:
-            title = article.get("title")
-            content = article.get("content")
-            if not title or not content or "[Removed]" in title:
-                continue
-            news_data.append(
-                {
-                    "title": title,
-                    "description": article.get("description"),
-                    "content": content,
-                }
-            )
+        return [
+            {
+                "title": article.get("title"),
+                "description": article.get("description"),
+                "content": article.get("content"),
+            }
+            for article in news
+            if article.get("title")
+            and article.get("content")
+            and "[Removed]" not in article.get("title")
+        ]
     except Exception as e:
-        logger.exception("Failed to clean news data")
+        logger.exception(f"Failed to clean news data: {e}")
         raise
-
-    return news_data
 
 
 def clean_json_string(text: str) -> str:
+    """Clean markdown code block wraps (like ```json ... ```) from LLM output.
+
+    Args:
+        text (str): The raw string response from the LLM.
+
+    Returns:
+        str: The cleaned JSON string.
     """
-    Cleans markdown code block wraps (like ```json ... ```) from LLM output.
-    """
+
     text = text.strip()
     if text.startswith("```json"):
         text = text[7:]

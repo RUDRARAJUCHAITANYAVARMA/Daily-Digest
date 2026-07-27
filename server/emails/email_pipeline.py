@@ -1,8 +1,12 @@
-import os
-import resend
+import datetime
 import logging
-from datetime import datetime
-from pathlib import Path
+import os
+import pathlib
+
+import dotenv
+import resend
+
+dotenv.load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -10,10 +14,18 @@ logger = logging.getLogger(__name__)
 resend.api_key = os.getenv("RESEND_API_KEY")
 
 
-def build_news_cards(summarized_articles):
-    cards = ""
+def build_news_cards(articles_summarized: dict) -> str:
+    """Build the HTML cards for the summarized articles.
 
-    for index, article in enumerate(summarized_articles.values(), start=1):
+    Args:
+        articles_summarized (dict): Dictionary of summarized articles.
+
+    Returns:
+        str: HTML string containing cards for each article.
+    """
+
+    cards = ""
+    for article in articles_summarized.values():
         cards += f"""
         <div class="card">
             <h2>{article['title']}</h2>
@@ -24,37 +36,57 @@ def build_news_cards(summarized_articles):
     return cards
 
 
-def build_email_html(summarized_articles):
-    template_path = Path(__file__).parent / "template.html"
+def build_email_html(articles_summarized: dict) -> str:
+    """Construct the complete newsletter HTML content using a template file.
 
-    with open(template_path, "r", encoding="utf-8") as file:
+    Args:
+        articles_summarized (dict): Dictionary of summarized articles.
+
+    Returns:
+        str: Complete HTML content for the newsletter.
+    """
+
+    path_template = pathlib.Path(__file__).parent / "template.html"
+
+    with open(path_template, "r", encoding="utf-8") as file:
         html = file.read()
 
-    html = html.replace("{{DATE}}", datetime.now().strftime("%d %B %Y"))
-
-    html = html.replace("{{NEWS_CONTENT}}", build_news_cards(summarized_articles))
+    current_date = datetime.datetime.now().strftime("%d %B %Y")
+    html = html.replace("{{DATE}}", current_date)
+    html = html.replace("{{NEWS_CONTENT}}", build_news_cards(articles_summarized))
 
     return html
 
 
-def send_newsletter(receiver_email: str, summarized_articles):
-    html = build_email_html(summarized_articles)
+def send_newsletter(email_receiver: str, articles_summarized: dict):
+    """Send the newsletter email to a specified receiver email address.
+
+    Args:
+        email_receiver (str): Email address of the recipient.
+        articles_summarized (dict): Dictionary of summarized articles.
+    """
+
+    html = build_email_html(articles_summarized)
 
     resend.Emails.send(
         {
             "from": "The Morning Brief <newsletter@dailydigest.in>",
-            "to": receiver_email,
+            "to": email_receiver,
             "subject": "📰 The Morning Brief",
             "html": html,
         }
     )
 
 
-def email_service_pipeline(summarized_articles):
-    """ """
+def email_service_pipeline(articles_summarized: dict):
+    """Execute the email sending pipeline to dispatch the daily newsletter.
+
+    Args:
+        articles_summarized (dict): Dictionary of summarized articles.
+    """
 
     try:
-        send_newsletter("chaitanyarudraraju5210@gmail.com", summarized_articles)
+        send_newsletter("chaitanyarudraraju5210@gmail.com", articles_summarized)
     except Exception as e:
-        logger.exception("Email pipeline Failed with Exception")
+        logger.exception(f"Email pipeline Failed with Exception: {e}")
         raise

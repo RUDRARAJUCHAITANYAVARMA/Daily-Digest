@@ -1,25 +1,25 @@
-import requests
 import os
-from dotenv import load_dotenv
 
-load_dotenv()
+import dotenv
+import requests
 
-news_api_key = os.getenv("NEWS_API_KEY")
+dotenv.load_dotenv()
+
+NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 
 
-def get_top_headlines(date):
-    """
-    Fetch top headlines from the News API
+def get_top_headlines(date: str):
+    """Fetch top headlines from the News API.
 
-    Parameters:
-        date: date from which news to be fetched (YYYY-MM-DD)
+    Args:
+        date (str): Date from which news to be fetched (YYYY-MM-DD).
 
     Returns:
-        list: list of news articles from the specified date
+        list: List of news articles from the specified date.
     """
 
     response = requests.get(
-        f"https://newsapi.org/v2/everything?q=world&from={date}&sortBy=popularity&pageSize=100&apiKey={news_api_key}"
+        f"https://newsapi.org/v2/everything?q=world&from={date}&sortBy=popularity&pageSize=100&apiKey={NEWS_API_KEY}"
     )
 
     if response.status_code == 200:
