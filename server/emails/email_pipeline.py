@@ -134,7 +134,7 @@ def email_service_pipeline(articles_summarized: dict):
 
         try:
             subject_line = news_fetcher.generate_subject_line(articles_summarized)
-            subject = f"Daily Digest: {subject_line['subject']}"
+            subject = f"📰 Daily Digest: {subject_line['subject']}"
             preheader = subject_line["preheader"]
         except Exception as subject_error:
             logger.error(
