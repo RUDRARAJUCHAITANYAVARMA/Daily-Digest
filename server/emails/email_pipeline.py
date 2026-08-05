@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 resend.api_key = os.getenv("RESEND_API_KEY")
 
-DEFAULT_SUBJECT = "📰 The Morning Brief"
+DEFAULT_SUBJECT = "📰 Daily Digest"
 
 
 def build_news_cards(articles_summarized: dict) -> str:
@@ -30,13 +30,26 @@ def build_news_cards(articles_summarized: dict) -> str:
         str: HTML string containing cards for each article.
     """
 
+    stories = list(articles_summarized.values())
     cards = ""
-    for article in articles_summarized.values():
+    for index, article in enumerate(stories, start=1):
+        divider = ""
+        if index != len(stories):
+            divider = """
+      <tr><td colspan="2" class="dd-divider" style="padding-top:22px;"><table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tr><td height="1" style="background-color:#e0ddd3; font-size:1px; line-height:1px;">&nbsp;</td></tr></table></td></tr>"""
+
         cards += f"""
-        <div class="card">
-            <h2>{html.escape(article['title'])}</h2>
-            <p>{html.escape(article['summary'])}</p>
-        </div>
+    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="margin:0 0 28px 0;">
+      <tr>
+        <td width="40" valign="top" class="dd-num" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:20px; line-height:1.3; font-weight:700; color:#b5502e; padding-right:12px;">{index:02d}</td>
+        <td valign="top">
+          <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr><td class="dd-headline" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:18px; line-height:1.35; font-weight:700; color:#1e2b23;">{html.escape(article['title'])}</td></tr>
+            <tr><td class="dd-summary" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:15px; line-height:1.6; color:#3f473f; padding-top:6px; mso-line-height-rule:exactly;">{html.escape(article['summary'])}</td></tr>
+          </table>
+        </td>
+      </tr>{divider}
+    </table>
         """
 
     return cards
@@ -84,7 +97,7 @@ def send_newsletter(
 
     resend.Emails.send(
         {
-            "from": "The Morning Brief <newsletter@dailydigest.in>",
+            "from": "Daily Digest <newsletter@dailydigest.in>",
             "to": email_receiver,
             "subject": subject,
             "html": html_content,
@@ -121,7 +134,7 @@ def email_service_pipeline(articles_summarized: dict):
 
         try:
             subject_line = news_fetcher.generate_subject_line(articles_summarized)
-            subject = subject_line["subject"]
+            subject = f"Daily Digest: {subject_line['subject']}"
             preheader = subject_line["preheader"]
         except Exception as subject_error:
             logger.error(

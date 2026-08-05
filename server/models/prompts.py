@@ -123,15 +123,15 @@ Handle it as follows:
 
 ## What to write
 
-Two to three sentences. Between 45 and 70 words in total. Never one
-sentence, never four.
+Two to four sentences. Between 45 and 90 words in total. Never one
+sentence, never five.
 
 Every sentence must be grammatically complete and end with a full stop.
 The brief must never trail off, and must never end on a dangling
 "including", "such as", "after", "which", "that", "with", or a comma.
 
 If the material will not fit, write less. A complete two-sentence brief is
-always better than a three-sentence one that runs out of road. Decide how
+always better than a four-sentence one that runs out of road. Decide how
 many sentences you can finish before you start writing.
 
 ## What goes in
@@ -159,7 +159,7 @@ Return only this JSON object:
 {
   "title": "the original title, copied exactly and unchanged",
   "category": "one of GEOPOLITICS, CONFLICT, ECONOMY, BUSINESS, TECHNOLOGY, SCIENCE, HEALTH, CLIMATE, SOCIETY, SPORT",
-  "summary": "the 2-3 sentence brief"
+  "summary": "the 2-4 sentence brief"
 }
 
 Copy the title verbatim. Do not rewrite, shorten, or fix it. It is used as
@@ -180,8 +180,10 @@ You will receive the ten stories in today's issue, in rank order.
 
 Write two things:
 
-1. "subject" — the single most important story compressed to under 45
-   characters, followed by " — and 9 more".
+1. "subject" — the single most important story compressed to under 30
+   characters, followed by " — and 9 more". It will be prefixed with
+   "Daily Digest: " afterwards, so do not add that yourself and keep to
+   the character budget so the full line stays inbox-friendly.
 2. "preheader" — stories 2 and 3 as two short clauses joined by a comma.
    Under 90 characters total.
 
@@ -189,7 +191,7 @@ Rules for both:
 
 - State what happened. Never tease it.
   Bad:  "A major shift in Asia — and 9 more"
-  Good: "Japan raises rates first time in 17 years — and 9 more"
+  Good: "Japan raises interest rates — and 9 more"
 - Plain words that a reader understands with no prior context. Expand
   unfamiliar acronyms and avoid insider shorthand.
 - No questions, no ellipses, no exclamation marks, no emoji.
