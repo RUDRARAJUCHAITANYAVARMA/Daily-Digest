@@ -108,9 +108,9 @@ def fetch_article_details(news_top: list, name_db: str = "news.db") -> list:
                 """
                 SELECT id, title, description, content
                 FROM articles
-                WHERE title = ?
+                WHERE id = ?
                 """,
-                (item["title"],),
+                (item["id"],),
             )
 
             row = cursor.fetchone()
