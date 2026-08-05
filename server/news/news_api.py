@@ -19,7 +19,8 @@ def get_top_headlines(date: str):
     """
 
     response = requests.get(
-        f"https://newsapi.org/v2/everything?q=world&from={date}&sortBy=popularity&pageSize=100&apiKey={NEWS_API_KEY}"
+        f"https://newsapi.org/v2/everything?q=world&from={date}&sortBy=popularity&pageSize=100&apiKey={NEWS_API_KEY}",
+        timeout=15,
     )
 
     if response.status_code == 200:

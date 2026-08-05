@@ -153,32 +153,81 @@ def summarize_articles(articles_selected: list) -> dict:
     articles_rephrased = {}
 
     for article in articles_selected:
-        completion = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompts.ARTICLE_SUMMARIZATION_PROMPT.replace(
-                        "{{ARTICAL}}", str(article)
-                    ),
-                }
-            ],
-            temperature=1,
-            max_completion_tokens=1024,
-            top_p=1,
-            stream=False,
-            stop=None,
-            response_format={"type": "json_object"},
-        )
+        try:
+            completion = client.chat.completions.create(
+                model="llama-3.3-70b-versatile",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": prompts.ARTICLE_SUMMARIZATION_PROMPT.replace(
+                            "{{ARTICLE}}", str(article)
+                        ),
+                    }
+                ],
+                temperature=1,
+                max_completion_tokens=1024,
+                top_p=1,
+                stream=False,
+                stop=None,
+                response_format={"type": "json_object"},
+            )
 
-        content = news_processor.clean_json_string(completion.choices[0].message.content)
-        logger.info("Raw Summarized Article : %s" % content)
-        article_rephrased = json.loads(content, strict=False)
+            content = news_processor.clean_json_string(completion.choices[0].message.content)
+            logger.info("Raw Summarized Article : %s" % content)
+            article_rephrased = json.loads(content, strict=False)
 
-        if article_rephrased["title"] not in articles_rephrased:
-            articles_rephrased[article_rephrased["title"]] = article_rephrased
+            if "title" not in article_rephrased:
+                logger.error(
+                    "Summarized article missing 'title' field, skipping: %s", content
+                )
+                continue
+
+            if article_rephrased["title"] not in articles_rephrased:
+                articles_rephrased[article_rephrased["title"]] = article_rephrased
+
+        except Exception as e:
+            logger.error(
+                "Failed to summarize article '%s', skipping: %s",
+                article.get("title"),
+                e,
+            )
 
     return articles_rephrased
+
+
+def generate_subject_line(articles_summarized: dict) -> dict:
+    """Generate an inbox subject line and preheader for today's digest using the LLM.
+
+    Args:
+        articles_summarized (dict): Summarized articles keyed by title, in rank order.
+
+    Returns:
+        dict: Dictionary with "subject" and "preheader" keys.
+    """
+
+    stories = list(articles_summarized.values())
+
+    completion = client.chat.completions.create(
+        model="llama-3.3-70b-versatile",
+        messages=[
+            {
+                "role": "user",
+                "content": prompts.SUBJECT_LINE_PROMPT.replace(
+                    "{{STORIES}}", str(stories)
+                ),
+            }
+        ],
+        temperature=1,
+        max_completion_tokens=256,
+        top_p=1,
+        stream=False,
+        stop=None,
+        response_format={"type": "json_object"},
+    )
+
+    content = news_processor.clean_json_string(completion.choices[0].message.content)
+    logger.info("Raw Subject Line : %s" % content)
+    return json.loads(content, strict=False)
 
 
 def get_top_news_digest(name_db: str = "news.db") -> dict:

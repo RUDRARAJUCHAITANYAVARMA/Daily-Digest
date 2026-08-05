@@ -7,7 +7,10 @@ logger = logging.getLogger(__name__)
 
 
 def initialize_article_db(name_db: str = "news.db"):
-    """Initialize the SQLite database and create the articles table if it does not exist.
+    """Initialize the SQLite database with a fresh, empty articles table.
+
+    Drops any existing articles table first so leftover rows from a
+    previous run that failed before cleanup don't get mixed with new data.
 
     Args:
         name_db (str): Name of the database file.
@@ -17,6 +20,8 @@ def initialize_article_db(name_db: str = "news.db"):
     try:
         connection = sqlite3.connect(name_db)
         cursor = connection.cursor()
+
+        cursor.execute("DROP TABLE IF EXISTS articles")
 
         cursor.execute(
             """
