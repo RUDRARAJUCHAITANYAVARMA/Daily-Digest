@@ -4,6 +4,7 @@ import os
 import pathlib
 
 import dotenv
+import requests
 import resend
 
 dotenv.load_dotenv()
@@ -86,7 +87,32 @@ def email_service_pipeline(articles_summarized: dict):
     """
 
     try:
-        send_newsletter("chaitanyarudraraju5210@gmail.com", articles_summarized)
+        sheets_endpoint = os.getenv("SUBSCRIBERS_SHEETS_ENDPOINT")
+        if not sheets_endpoint:
+            raise ValueError("SUBSCRIBERS_SHEETS_ENDPOINT environment variable is not set")
+
+        logger.info("Fetching subscriber emails from Google Sheet...")
+        response = requests.get(f"{sheets_endpoint}?action=getEmails", timeout=15)
+        response.raise_for_status()
+        
+        data = response.json()
+        if not data.get("success"):
+            raise ValueError(f"Failed to retrieve subscribers: {data.get('message')}")
+
+        emails = data.get("emails", [])
+        logger.info(f"Retrieved {len(emails)} active subscriber(s).")
+
+        if not emails:
+            logger.info("No active subscribers to send the newsletter to.")
+            return
+
+        for email in emails:
+            try:
+                logger.info(f"Sending newsletter to {email}...")
+                send_newsletter(email, articles_summarized)
+            except Exception as email_error:
+                logger.error(f"Failed to send newsletter to {email}: {email_error}")
+
     except Exception as e:
         logger.exception(f"Email pipeline Failed with Exception: {e}")
         raise
