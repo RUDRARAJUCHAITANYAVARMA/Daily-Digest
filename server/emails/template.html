@@ -1,279 +1,246 @@
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark" />
-    <meta name="supported-color-schemes" content="dark" />
-    <title>Global Brief</title>
-
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    <title>Daily Digest</title>
+    <!--[if mso]>
+<style type="text/css">
+table {border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt;}
+</style>
+<![endif]-->
     <style type="text/css">
-        /* Core email-client overrides & typography fallbacks */
         body,
         table,
-        td,
-        a {
+        td {
             -webkit-text-size-adjust: 100%;
             -ms-text-size-adjust: 100%;
         }
 
-        table,
-        td {
-            mso-table-lspace: 0pt;
-            mso-table-rspace: 0pt;
-        }
-
         img {
-            -ms-interpolation-mode: bicubic;
             border: 0;
-            height: auto;
-            line-height: 100%;
             outline: none;
             text-decoration: none;
         }
 
-        table {
-            border-collapse: collapse !important;
-        }
-
-        body {
-            height: 100% !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            width: 100% !important;
-            background-color: #050506;
-        }
-
         a {
-            color: #d0d0d5;
+            text-decoration: none;
         }
 
         /*
-          UNIVERSAL INJECTED ELEMENT FORMATTING
-          Whatever dynamic content lands in {{NEWS_CONTENT}} / {{NEWS_CONTENT_HERO}}
-          inherits this styling automatically.
-        */
-        .news-container h1,
-        .news-container h2,
-        .news-container h3 {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-            font-weight: 600 !important;
-            color: #f5f5f7 !important;
-            font-size: 21px !important;
-            line-height: 1.35 !important;
-            margin-top: 28px !important;
-            margin-bottom: 10px !important;
-            padding: 0 !important;
-            letter-spacing: -0.2px !important;
+    Classes for injected content ({{NEWS_CONTENT}}).
+    Outlook strips this block, so every story block generated for
+    {{NEWS_CONTENT}} MUST still carry the equivalent inline styles as
+    the source of truth. These classes exist only to (a) apply the
+    dark-mode overrides below and (b) give the content generator a
+    documented, consistent hook set. Expected per-story structure:
+
+    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" style="margin:0 0 28px 0;">
+      <tr>
+        <td width="40" valign="top" class="dd-num" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:20px; line-height:1.3; font-weight:700; color:#b5502e; padding-right:12px;">01</td>
+        <td valign="top">
+          <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+            <tr><td class="dd-headline" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:18px; line-height:1.35; font-weight:700; color:#1e2b23;">Story headline goes here</td></tr>
+            <tr><td class="dd-summary" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:15px; line-height:1.6; color:#3f473f; padding-top:6px; mso-line-height-rule:exactly;">One- to two-sentence summary of the story.</td></tr>
+            <tr><td class="dd-source" style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:13px; line-height:1.5; color:#5c6660; padding-top:8px;">Source Name &nbsp;&#183;&nbsp; <a href="#" class="dd-link" style="color:#b5502e;">Read more &#8594;</a></td></tr>
+          </table>
+        </td>
+      </tr>
+      <tr><td colspan="2" class="dd-divider" style="padding-top:22px;"><table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0"><tr><td height="1" style="background-color:#e0ddd3; font-size:1px; line-height:1px;">&nbsp;</td></tr></table></td></tr>
+    </table>
+
+    Repeat for all 10 stories; omit the divider row after story 10.
+  */
+        .dd-num,
+        .dd-headline,
+        .dd-summary,
+        .dd-source,
+        .dd-link {}
+
+        @media (prefers-color-scheme: dark) {
+            .dd-bg {
+                background-color: #14201a !important;
+            }
+
+            .dd-panel {
+                background-color: #1c2b23 !important;
+            }
+
+            .dd-ink {
+                color: #f2f0ea !important;
+            }
+
+            .dd-sub {
+                color: #b9c2ba !important;
+            }
+
+            .dd-headline {
+                color: #f2f0ea !important;
+            }
+
+            .dd-summary {
+                color: #cdd4cc !important;
+            }
+
+            .dd-source {
+                color: #9aa39a !important;
+            }
+
+            .dd-divider td {
+                background-color: #33443a !important;
+            }
+
+            .dd-hr td {
+                background-color: #33443a !important;
+            }
         }
 
-        .news-container h2:first-child,
-        .news-container h3:first-child {
-            margin-top: 4px !important;
-        }
-
-        .news-container p {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-            font-size: 14px !important;
-            line-height: 1.7 !important;
-            color: #9c9ca3 !important;
-            margin-top: 0 !important;
-            margin-bottom: 18px !important;
-            font-weight: 400 !important;
-            letter-spacing: 0.1px !important;
-        }
-
-        /* Small category/kicker tag that can be dropped above a headline, e.g. <span class="tag">MARKETS</span> */
-        .news-container .tag {
-            display: inline-block;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-            font-size: 10px !important;
-            font-weight: 700 !important;
-            color: #7a7a82 !important;
-            letter-spacing: 1.2px !important;
-            text-transform: uppercase !important;
-            margin-bottom: 6px !important;
-        }
-
-        /* "Read more" link style for injected content */
-        .news-container .read-more {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
-            font-size: 13px !important;
-            font-weight: 600 !important;
-            color: #d0d0d5 !important;
-            text-decoration: underline !important;
-            letter-spacing: 0.1px !important;
-            display: inline-block;
-            margin-top: -6px;
-            margin-bottom: 22px;
-        }
-
-        /* Divider between stacked stories inside {{NEWS_CONTENT}} */
-        .news-container .story-divider {
-            border-top: 1px solid #1e1e21;
-            line-height: 1px;
-            font-size: 1px;
-            margin: 4px 0 26px 0;
-        }
-
-        /* Mobile Responsive Optimizations */
         @media only screen and (max-width: 600px) {
-            .email-container {
+            .email-wrapper {
                 width: 100% !important;
                 max-width: 100% !important;
-                border: none !important;
-                border-radius: 0 !important;
             }
 
-            .padded-inner {
-                padding: 30px 20px !important;
+            .fluid-pad {
+                padding-left: 20px !important;
+                padding-right: 20px !important;
             }
 
-            .masthead-title {
-                font-size: 30px !important;
-            }
-
-            .meta-block {
-                display: block !important;
-                width: 100% !important;
-                text-align: left !important;
-                padding-top: 10px;
-            }
-
-            .news-container h1,
-            .news-container h2,
-            .news-container h3 {
-                font-size: 19px !important;
+            .stack-pad-top {
+                padding-top: 28px !important;
             }
         }
     </style>
 </head>
 
-<body
-    style="margin: 0; padding: 40px 10px; background-color: #050506; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased;">
+<body style="margin:0; padding:0; background-color:#f5f4ef;" bgcolor="#f5f4ef">
 
-    <!-- Preheader: hidden preview text shown in inbox list, not in the body -->
     <div
-        style="display:none; max-height:0; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#050506;">
-        {{PREHEADER_TEXT}}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+        style="display:none; max-height:0px; overflow:hidden; mso-hide:all; font-size:1px; line-height:1px; color:#f5f4ef;">
+        {{PREHEADER_TEXT}}
+        &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
     </div>
 
-    <table border="0" cellpadding="0" cellspacing="0" width="100%"
-        style="table-layout: fixed; background-color: #050506;">
+    <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0" class="dd-bg"
+        style="background-color:#f5f4ef;" bgcolor="#f5f4ef">
         <tr>
-            <td align="center" valign="top">
+            <td align="center" style="padding:24px 12px;">
 
-                <!-- View in browser -->
-                <table border="0" cellpadding="0" cellspacing="0" width="600" style="max-width: 600px;">
+                <!--[if mso]>
+<table role="presentation" align="center" width="600" border="0" cellpadding="0" cellspacing="0"><tr><td>
+<![endif]-->
+                <table role="presentation" width="600" border="0" cellpadding="0" cellspacing="0" class="email-wrapper"
+                    style="width:600px; max-width:600px;">
+
+                    <!-- Masthead -->
                     <tr>
-                        <td align="center" style="padding: 0 0 14px 0;">
-                            <a href="{{VIEW_IN_BROWSER_URL}}"
-                                style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; color: #52525b; letter-spacing: 0.3px; text-decoration: none;">
-                                View in browser
-                            </a>
-                        </td>
-                    </tr>
-                </table>
-
-                <!-- 600px Wide Master Container -->
-                <table border="0" cellpadding="0" cellspacing="0" class="email-container" width="600"
-                    style="max-width: 600px; background-color: #0d0d0f; border: 1px solid #1e1e21; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.6);">
-
-                    <!-- Masthead Section -->
-                    <tr>
-                        <td class="padded-inner" style="padding: 48px 40px 28px 40px;">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <td align="center" class="fluid-pad" style="padding:36px 40px 20px 40px;">
+                            <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <td align="center" class="masthead-title"
-                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 34px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px; line-height: 1.2; padding-bottom: 8px; text-align: center;">
-                                        Global Brief
+                                    <td align="center"
+                                        style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:12px; line-height:1.4; font-weight:600; letter-spacing:0.5px; color:#b5502e; padding-bottom:8px;"
+                                        class="dd-sub">
+                                        Your Morning Briefing
                                     </td>
                                 </tr>
                                 <tr>
                                     <td align="center"
-                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 400; color: #71717a; letter-spacing: 0.1px; padding-bottom: 28px; line-height: 1.4; text-align: center;">
-                                        Insights that matter, curated for absolute focus.
+                                        style="font-family:Georgia,'Times New Roman',Times,serif; font-size:32px; line-height:1.25; font-weight:400; color:#1e2b23;"
+                                        class="dd-ink">
+                                        Daily Digest
                                     </td>
                                 </tr>
-
-                                <!-- Dateline -->
                                 <tr>
-                                    <td
-                                        style="border-top: 1px solid #1e1e21; border-bottom: 1px solid #1e1e21; padding: 14px 0;">
-                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                                    <td align="center" style="padding-top:12px;">
+                                        <table role="presentation" border="0" cellpadding="0" cellspacing="0">
                                             <tr>
-                                                <td valign="middle"
-                                                    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; font-weight: 600; color: #d4d4d8; letter-spacing: 0.5px;">
-                                                    {{DATE}} <span style="color: #3f3f46;">&middot;</span> <span
-                                                        style="font-weight: 400; color: #71717a;">Issue
-                                                        {{ISSUE_NO}}</span>
-                                                </td>
-                                                <td align="right" valign="middle" class="meta-block"
-                                                    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 10px; font-weight: 600; color: #52525b; letter-spacing: 1.5px; text-transform: uppercase;">
-                                                    Global Briefings
-                                                </td>
+                                                <td width="48" height="3"
+                                                    style="background-color:#b5502e; font-size:1px; line-height:1px;">
+                                                    &nbsp;</td>
                                             </tr>
                                         </table>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center"
+                                        style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:14px; line-height:1.6; color:#5c6660; padding-top:14px; mso-line-height-rule:exactly;"
+                                        class="dd-sub">
+                                        {{DATE}}
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
 
-                    <!-- STORIES SECTION -->
+                    <!-- Intro -->
                     <tr>
-                        <td class="padded-inner" style="padding: 26px 40px 20px 40px;">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <td align="center" class="fluid-pad" style="padding:0 40px 28px 40px;">
+                            <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <!--
-                                        Each story dropped into {{NEWS_CONTENT}} can optionally use:
-                                        <span class="tag">CATEGORY</span>
-                                        <h2>Headline</h2>
-                                        <p>Summary paragraph...</p>
-                                        <a class="read-more" href="...">Read more</a>
-                                        <div class="story-divider"></div>
-                                    -->
-                                    <td class="news-container">
-                                        {{NEWS_CONTENT}}
+                                    <td align="center"
+                                        style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:15px; line-height:1.6; color:#3f473f; mso-line-height-rule:exactly;"
+                                        class="dd-summary">
+                                        Ten stories. Everything that mattered in the world today, in one sitting.
                                     </td>
                                 </tr>
                             </table>
                         </td>
                     </tr>
 
-                    <!-- FOOTER PANEL -->
+                    <!-- Divider -->
                     <tr>
-                        <td class="padded-inner"
-                            style="padding: 40px 40px 44px 40px; background-color: #08080a; border-top: 1px solid #1e1e21;">
-                            <table border="0" cellpadding="0" cellspacing="0" width="100%">
+                        <td class="dd-hr" style="padding:0 40px;">
+                            <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
                                 <tr>
-                                    <td align="left"
-                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 700; color: #f5f5f7; padding-bottom: 8px; text-transform: uppercase; letter-spacing: 1.2px;">
-                                        About Global Brief
+                                    <td height="1" style="background-color:#e0ddd3; font-size:1px; line-height:1px;">
+                                        &nbsp;</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <!-- Stories -->
+                    <tr>
+                        <td class="fluid-pad dd-panel" bgcolor="#ffffff"
+                            style="background-color:#ffffff; padding:32px 40px 8px 40px;">
+                            {{NEWS_CONTENT}}
+
+                            <!-- Sign-off -->
+                    <tr>
+                        <td align="center" class="fluid-pad dd-panel" bgcolor="#ffffff"
+                            style="background-color:#ffffff; padding:4px 40px 36px 40px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:14px; line-height:1.6; color:#5c6660; mso-line-height-rule:exactly;">
+                            That's your digest. See you tomorrow.
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td align="center" class="fluid-pad" style="padding:28px 40px 40px 40px;">
+                            <table role="presentation" width="100%" border="0" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center"
+                                        style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:13px; line-height:1.6; color:#5c6660; mso-line-height-rule:exactly;"
+                                        class="dd-sub">
+                                        You're receiving this email because you subscribed to Daily Digest.
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td align="left"
-                                        style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 12px; line-height: 1.8; color: #71717a; padding-bottom: 22px; font-weight: 400; letter-spacing: 0.1px;">
-                                        We bring you synthesis instead of noise. Our summaries are curated cleanly to
-                                        keep your mental space free from distracting ads, algorithms, and cookies. Thank
-                                        you for reading.
+                                    <td align="center"
+                                        style="padding-top:10px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:13px; line-height:1.6; color:#5c6660; mso-line-height-rule:exactly;"
+                                        class="dd-sub">
+                                        <a href="{{UNSUBSCRIBE_URL}}"
+                                            style="color:#5c6660; text-decoration:underline;">Unsubscribe</a>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="border-top: 1px solid #1e1e21; padding-top: 18px;">
-                                        <table border="0" cellpadding="0" cellspacing="0" width="100%">
-                                            <tr>
-                                                <td align="left"
-                                                    style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size: 11px; color: #52525b; text-transform: uppercase; letter-spacing: 0.5px;">
-                                                    Made with &#10084;&#65039; by indie developer
-                                                    <strong style="color: #f5f5f7; font-weight: 600;">Chaitanya Varma
-                                                        Rudraraju</strong>
-                                                </td>
-                                            </tr>
-                                        </table>
+                                    <td align="center"
+                                        style="padding-top:4px; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; font-size:12px; line-height:1.6; color:#8a9089; mso-line-height-rule:exactly;"
+                                        class="dd-sub">
+                                        &copy; 2026 Daily Digest. All rights reserved.
                                     </td>
                                 </tr>
                             </table>
@@ -281,6 +248,9 @@
                     </tr>
 
                 </table>
+                <!--[if mso]>
+</td></tr></table>
+<![endif]-->
 
             </td>
         </tr>
