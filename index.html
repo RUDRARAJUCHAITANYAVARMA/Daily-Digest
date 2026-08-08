@@ -53,7 +53,7 @@
 
     <link rel="icon" type="image/png" href="https://dailydigest.in/favicon.png">
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌏</text></svg>">
-    <style>
+    <style id="__bundler_loader_styles">
         * {
             margin: 0;
             padding: 0;
@@ -85,16 +85,14 @@
         #__bundler_thumbnail {
             position: fixed;
             inset: 0;
-            width: 100%;
-            height: 100%;
+            z-index: 9999;
+            background: #15161A;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: clamp(20px, 4vw, 36px);
-            background: #FAF9F6;
-            z-index: 9999;
             overflow: hidden;
+            transition: transform 0.85s cubic-bezier(0.76,0,0.24,1), visibility 0.85s;
         }
 
         #__bundler_placeholder {
@@ -102,152 +100,133 @@
             font-size: 14px;
         }
 
-        .dd-globe-wrap {
-            position: relative;
-            width: clamp(140px, 26vw, 220px);
-            height: clamp(140px, 26vw, 220px);
-            flex-shrink: 0;
+        .dd-loader-map {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 1400px;
+            max-width: none;
+            transform: translate(-50%,-50%);
+            opacity: 0.05;
+            pointer-events: none;
         }
 
-        .dd-globe {
+        .dd-loader-glow {
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #8B3A2E35, transparent 70%);
+            filter: blur(40px);
+            animation: dd-glow-pulse 2.4s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .dd-loader-globe {
             position: relative;
-            width: 100%;
-            height: 100%;
+            width: 132px;
+            height: 132px;
             border-radius: 50%;
             overflow: hidden;
-            background: #1A4E75;
-            box-shadow:
-                0 40px 60px -25px rgba(26, 78, 117, 0.5),
-                inset -16px -16px 34px rgba(0, 0, 0, 0.35),
-                inset 12px 12px 26px rgba(255, 255, 255, 0.12);
-            animation: dd-float 5s ease-in-out infinite;
+            box-shadow: 0 0 0 1px rgba(250,249,246,0.14), 0 30px 60px -20px rgba(0,0,0,0.5);
+            animation: dd-loader-fade 0.5s ease both;
         }
 
-        .dd-globe-land {
+        .dd-loader-globe-ocean {
             position: absolute;
-            top: -6%;
-            left: 0;
-            width: 200%;
-            height: 112%;
-            animation: dd-spin 9s linear infinite;
-            will-change: transform;
+            inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle at 32% 28%, #3E86B8, #1A4E75 50%, #082033 100%);
         }
 
-        .dd-globe-land svg {
-            display: block;
-            width: 100%;
+        .dd-loader-globe-land {
+            position: absolute;
+            top: 0;
+            left: -63%;
+            width: 226%;
             height: 100%;
+            background: linear-gradient(160deg,#8FA85C,#5D7A3C);
+            -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+            -webkit-mask-size: 100% 100%;
+            mask-size: 100% 100%;
+            animation: dd-globe-drift 3.2s ease-in-out infinite alternate;
         }
 
-        .dd-globe-grid {
+        .dd-loader-globe-specular {
             position: absolute;
             inset: 0;
             border-radius: 50%;
+            background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.24), transparent 45%);
+            mix-blend-mode: soft-light;
             pointer-events: none;
-            background: repeating-linear-gradient(0deg,
-                    rgba(255, 255, 255, 0.09) 0px,
-                    rgba(255, 255, 255, 0.09) 1px,
-                    transparent 1px,
-                    transparent 17%);
         }
 
-        .dd-globe-shade {
+        .dd-loader-globe-shade {
             position: absolute;
             inset: 0;
             border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%, transparent 55%, rgba(0,0,0,0.5) 100%);
             pointer-events: none;
-            background:
-                radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 42%),
-                radial-gradient(circle at 76% 82%, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0) 58%);
-        }
-
-        .dd-orbit {
-            position: absolute;
-            inset: -22px;
-            border-radius: 50%;
-            border: 1px dashed rgba(21, 22, 26, 0.14);
-            animation: dd-orbit-spin 5s linear infinite;
-        }
-
-        .dd-orbit span {
-            position: absolute;
-            top: -4px;
-            left: 50%;
-            width: 8px;
-            height: 8px;
-            margin-left: -4px;
-            border-radius: 50%;
-            background: #8B3A2E;
-            box-shadow: 0 0 12px rgba(139, 58, 46, 0.65);
-        }
-
-        .dd-orbit.dd-orbit-2 {
-            inset: -42px;
-            animation-duration: 8s;
-            animation-direction: reverse;
-            border-color: rgba(93, 122, 60, 0.16);
-        }
-
-        .dd-orbit.dd-orbit-2 span {
-            background: #5D7A3C;
-            box-shadow: 0 0 12px rgba(93, 122, 60, 0.6);
-            width: 6px;
-            height: 6px;
-            margin-left: -3px;
         }
 
         .dd-loader-text {
-            text-align: center;
+            margin-top: 26px;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 12px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(250,249,246,0.75);
+            font-weight: 600;
+            animation: dd-loader-fade 0.5s ease 0.15s both;
+        }
+
+        .dd-loader-track {
+            margin-top: 22px;
+            width: 180px;
+            height: 2px;
+            background: rgba(250,249,246,0.16);
+            border-radius: 2px;
+            overflow: hidden;
+            animation: dd-loader-fade 0.5s ease 0.2s both;
+        }
+
+        .dd-loader-bar {
+            height: 100%;
+            border-radius: 2px;
+            background: #8B3A2E;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .dd-loader-pct {
+            margin-top: 12px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            color: rgba(250,249,246,0.4);
             font-family: Georgia, 'Times New Roman', serif;
-            line-height: 1.15;
+            animation: dd-loader-fade 0.5s ease 0.2s both;
         }
 
-        .dd-loader-text span {
-            display: block;
-            font-size: clamp(28px, 6vw, 44px);
-            color: #15161A;
+        @keyframes dd-glow-pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.85; }
         }
 
-        .dd-loader-text span.dd-italic {
-            color: #8B3A2E;
-            font-style: italic;
+        @keyframes dd-globe-drift {
+            from { transform: translateX(0); }
+            to { transform: translateX(-5%); }
         }
 
-        @keyframes dd-spin {
-            from {
-                transform: translateX(0);
-            }
-
-            to {
-                transform: translateX(-50%);
-            }
-        }
-
-        @keyframes dd-orbit-spin {
-            from {
-                transform: rotate(0deg);
-            }
-
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes dd-float {
-            0%, 100% {
-                transform: translateY(0);
-            }
-
-            50% {
-                transform: translateY(-6px);
-            }
+        @keyframes dd-loader-fade {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         @media (prefers-reduced-motion: reduce) {
 
-            .dd-globe,
-            .dd-globe-land,
-            .dd-orbit {
+            .dd-loader-glow,
+            .dd-loader-globe-land {
                 animation: none;
             }
         }
@@ -267,35 +246,20 @@
 
 <body>
     <div id="__bundler_thumbnail">
-        <div class="dd-globe-wrap">
-            <div class="dd-orbit dd-orbit-2"><span></span></div>
-            <div class="dd-orbit"><span></span></div>
-            <div class="dd-globe">
-                <div class="dd-globe-land">
-                    <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
-                        <defs>
-                            <g id="dd-land">
-                                <ellipse cx="40" cy="55" rx="30" ry="20" fill="#5D7A3C" transform="rotate(-15 40 55)"></ellipse>
-                                <ellipse cx="88" cy="38" rx="16" ry="11" fill="#5D7A3C" transform="rotate(10 88 38)"></ellipse>
-                                <ellipse cx="34" cy="118" rx="22" ry="30" fill="#5D7A3C" transform="rotate(8 34 118)"></ellipse>
-                                <ellipse cx="122" cy="88" rx="18" ry="13" fill="#5D7A3C" transform="rotate(-20 122 88)"></ellipse>
-                                <ellipse cx="152" cy="142" rx="20" ry="14" fill="#4A6530" transform="rotate(15 152 142)"></ellipse>
-                                <ellipse cx="95" cy="162" rx="12" ry="9" fill="#5D7A3C"></ellipse>
-                                <ellipse cx="176" cy="58" rx="14" ry="10" fill="#4A6530" transform="rotate(25 176 58)"></ellipse>
-                            </g>
-                        </defs>
-                        <use href="#dd-land" x="0" y="0"></use>
-                        <use href="#dd-land" x="200" y="0"></use>
-                    </svg>
-                </div>
-                <div class="dd-globe-grid"></div>
-                <div class="dd-globe-shade"></div>
+        <img class="dd-loader-map" alt="">
+        <div class="dd-loader-glow"></div>
+        <div class="dd-loader-globe">
+            <div class="dd-loader-globe-ocean">
+                <div class="dd-loader-globe-land"></div>
             </div>
+            <div class="dd-loader-globe-specular"></div>
+            <div class="dd-loader-globe-shade"></div>
         </div>
-        <div class="dd-loader-text">
-            <span>Ten stories.</span>
-            <span class="dd-italic">Zero fluff.</span>
+        <div class="dd-loader-text">Daily Digest</div>
+        <div class="dd-loader-track">
+            <div class="dd-loader-bar" id="dd-loader-bar"></div>
         </div>
+        <div class="dd-loader-pct" id="dd-loader-pct">0%</div>
     </div>
     <div id="__bundler_loading">Unpacking...</div>
 
@@ -304,6 +268,55 @@
         document.addEventListener('DOMContentLoaded', async function () {
             const loading = document.getElementById('__bundler_loading');
             function setStatus(msg) { if (loading) loading.textContent = msg; }
+
+            // Captured now, before any swap detaches it from the live document —
+            // the same node gets re-attached on top of the real page afterward so
+            // the branded loader animation always plays in full, even though the
+            // unpack below is fast enough to otherwise finish within one frame.
+            const loaderEl = document.getElementById('__bundler_thumbnail');
+            const loaderStylesEl = document.getElementById('__bundler_loader_styles');
+
+            function playLoaderAndReveal() {
+                if (!loaderEl) return;
+                if (loaderStylesEl) document.head.appendChild(loaderStylesEl);
+                document.body.appendChild(loaderEl);
+
+                // Assign image sources only now that the node is attached to the
+                // live document — starting these loads earlier risks the browser
+                // cancelling the in-flight fetch when replaceWith() detaches the
+                // old documentElement mid-request.
+                const mapImg = loaderEl.querySelector('.dd-loader-map');
+                if (mapImg) mapImg.src = 'world-map.png';
+                const landEl = loaderEl.querySelector('.dd-loader-globe-land');
+                if (landEl) {
+                    landEl.style.webkitMaskImage = 'url("world-map.png")';
+                    landEl.style.maskImage = 'url("world-map.png")';
+                }
+
+                const bar = loaderEl.querySelector('#dd-loader-bar');
+                const pct = loaderEl.querySelector('#dd-loader-pct');
+                const duration = 1500;
+                const start = performance.now();
+
+                function tick(now) {
+                    const t = Math.min(1, (now - start) / duration);
+                    const eased = 1 - Math.pow(1 - t, 3);
+                    const progress = Math.round(eased * 100);
+                    if (bar) bar.style.width = progress + '%';
+                    if (pct) pct.textContent = progress + '%';
+                    if (t < 1) {
+                        requestAnimationFrame(tick);
+                    } else {
+                        setTimeout(function () {
+                            loaderEl.style.transform = 'translateY(-100%)';
+                            loaderEl.style.visibility = 'hidden';
+                            loaderEl.style.pointerEvents = 'none';
+                            setTimeout(function () { loaderEl.remove(); }, 900);
+                        }, 280);
+                    }
+                }
+                requestAnimationFrame(tick);
+            }
 
             const FONT_MIME = /^(font[/]|application[/](x-)?font-|application[/]vnd\.ms-fontobject)/i;
             const MIME_TOKEN = /^[\w.+-]+[/][\w.+-]+$/;
@@ -586,6 +599,7 @@
                 // preserve ordering (React before ReactDOM before Babel before text/babel).
                 const doc = new DOMParser().parseFromString(template, 'text/html');
                 document.documentElement.replaceWith(doc.documentElement);
+                playLoaderAndReveal();
 
                 // Resolve page-frame markers: mint this document's own blob for each
                 // framed page — from local text when this is the root, otherwise by
