@@ -38,9 +38,11 @@ async function getSubscriberCount(env) {
 function welcomeEmailPayload(email) {
   const text =
     "Hey,\n\n" +
-    "This is Chaitanya, the person who builds Daily Digest. I just wanted to say thank you for subscribing.\n\n" +
-    "You'll get the ten most important stories in the world every morning, each one in three sentences. No ads, no tracking, nothing trying to keep you scrolling. A couple of minutes and you're done.\n\n" +
-    "Thank you again for trusting me with a spot in your inbox. I know that's not a small thing to give away, and I'm grateful you did.\n\n" +
+    "This is Chaitanya from Daily Digest. I'm really grateful you subscribed, and I'll make it worth your time every morning.\n\n" +
+    "You'll get the ten stories that actually matter, each in three sentences. No ads, no tracking, nothing engineered to keep you scrolling. Two minutes and you're caught up.\n\n" +
+    "Your first one lands tomorrow.\n\n" +
+    "And if you hit reply and tell me what you're hoping to get out of this, I read every one.\n\n" +
+    "See you tomorrow morning,\n" +
     "Chaitanya\n" +
     "dailydigest.in";
 
@@ -55,7 +57,7 @@ function welcomeEmailPayload(email) {
   return {
     from: "Daily Digest <newsletter@dailydigest.in>",
     to: email,
-    subject: "📰 Welcome to Daily Digest",
+    subject: "Thanks for subscribing - your first Digest arrives tomorrow",
     text,
     html,
   };
