@@ -1,11 +1,8 @@
 name: Run News Pipeline
 
 on:
-  schedule:
-    # Runs everyday at 7:30 AM IST (2:00 AM UTC)
-    - cron: '0 2 * * *'
-  # Adds a button in GitHub to run this manually at any time
-  workflow_dispatch: 
+  # Triggered daily by an external cron-job.org schedule calling the
+  workflow_dispatch:
 
 jobs:
   run-pipeline:
