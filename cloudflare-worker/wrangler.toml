@@ -1,0 +1,3 @@
+name = "daily-digest-subscribe"
+main = "subscribe.js"
+compatibility_date = "2026-08-06"

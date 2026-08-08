@@ -35,5 +35,5 @@ jobs:
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
           NEWS_API_KEY: ${{ secrets.NEWS_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          SUBSCRIBERS_SHEETS_ENDPOINT: ${{ secrets.SUBSCRIBERS_SHEETS_ENDPOINT }}
+          RESEND_AUDIENCE_ID: ${{ secrets.RESEND_AUDIENCE_ID }}
         run: python server/pipeline.py

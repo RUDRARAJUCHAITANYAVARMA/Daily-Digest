@@ -113,19 +113,24 @@ def email_service_pipeline(articles_summarized: dict):
     """
 
     try:
-        sheets_endpoint = os.getenv("SUBSCRIBERS_SHEETS_ENDPOINT")
-        if not sheets_endpoint:
-            raise ValueError("SUBSCRIBERS_SHEETS_ENDPOINT environment variable is not set")
+        audience_id = os.getenv("RESEND_AUDIENCE_ID")
+        if not audience_id:
+            raise ValueError("RESEND_AUDIENCE_ID environment variable is not set")
 
-        logger.info("Fetching subscriber emails from Google Sheet...")
-        response = requests.get(f"{sheets_endpoint}?action=getEmails", timeout=15)
+        logger.info("Fetching subscriber emails from Resend audience...")
+        response = requests.get(
+            f"https://api.resend.com/audiences/{audience_id}/contacts",
+            headers={"Authorization": f"Bearer {resend.api_key}"},
+            timeout=15,
+        )
         response.raise_for_status()
-        
-        data = response.json()
-        if not data.get("success"):
-            raise ValueError(f"Failed to retrieve subscribers: {data.get('message')}")
 
-        emails = data.get("emails", [])
+        data = response.json()
+        emails = [
+            contact["email"]
+            for contact in data.get("data", [])
+            if not contact.get("unsubscribed")
+        ]
         logger.info(f"Retrieved {len(emails)} active subscriber(s).")
 
         if not emails:
