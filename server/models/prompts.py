@@ -45,13 +45,25 @@ single-story version of that event exists in the list.
 One event gets one slot. This is the rule most often broken, so apply it
 deliberately.
 
-Before finalising, group the candidates by underlying event, not by
-wording. "Two earthquakes kill 164 in Venezuela" and "World rocked by four
-quakes in eight hours" describe the same event and compete for one slot.
-Keep whichever headline is more specific and more informative.
+Group candidates by underlying event, not by wording: same actor, same
+action, same location, same rough timeframe. "Two earthquakes kill 164 in
+Venezuela" and "World rocked by four quakes in eight hours" are the same
+event and compete for one slot — keep whichever headline is more specific
+and informative, and discard the rest.
 
-Two headlines are the same event if they report the same facts about the
-same occurrence, even when the framing, region, or angle differs.
+A single event gets reprinted by many outlets as the story develops, so
+its headlines routinely disagree on casualty counts, dollar figures, or
+carry one extra detail the earlier report lacked. That disagreement is
+normal wire noise, not evidence of a second event — a strike reported as
+"kills 12" and the same strike updated to "kills 13, with a refinery hit"
+are one story, not two. Never let a differing statistic alone convince you
+two headlines describe different events.
+
+Before finalising, re-scan your 10 picks pairwise: for every pair, ask
+whether they share an actor, action, and location. If they do, that is a
+duplicate — drop the less specific one and, only if a genuinely distinct
+story remains elsewhere in the candidate list, promote it to fill the
+freed slot. Do not pad with a near-duplicate just to keep the count at 10.
 
 Having deduplicated, prefer breadth: the final ten should span several
 domains — politics, economics, science, technology, health, environment —

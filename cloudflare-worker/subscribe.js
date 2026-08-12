@@ -75,19 +75,31 @@ async function sendWelcomeEmail(env, email) {
 
 function confirmationEmailPayload(email, confirmationUrl) {
   const text =
-    "Hey,\n\n" +
-    "Please confirm your Daily Digest subscription by opening this link:\n" +
+    "Hello,\n\n" +
+    "Thank you for subscribing to Daily Digest — the ten stories that matter most, summarized in three sentences each, delivered to your inbox every morning at 7:30 AM IST.\n\n" +
+    "Please confirm your subscription using the link below:\n" +
     confirmationUrl +
-    "\n\nThis link expires in 24 hours. If you did not request Daily Digest, you can safely ignore this email.\n\n" +
-    "Chaitanya\n" +
+    "\n\nThis link will expire in 24 hours. If you did not request this subscription, no action is needed.\n\n" +
+    "Regards,\n" +
+    "Daily Digest\n" +
     "dailydigest.in";
+
+  const font = "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif";
+  const html = `
+    <p style="margin:0 0 16px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Hello,</p>
+    <p style="margin:0 0 24px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Thank you for subscribing to Daily Digest — the ten stories that matter most, summarized in three sentences each, delivered to your inbox every morning at 7:30 AM IST.</p>
+    <p style="margin:0 0 16px 0;"><a href="${confirmationUrl}" style="display:inline-block;background:#3F9A5C;color:#ffffff;font-family:${font};font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:6px;">Confirm Subscription</a></p>
+    <p style="margin:0 0 24px 0;font-family:${font};font-size:13px;color:#68736c;">If the button above does not work, copy and paste this link into your browser:<br><a href="${confirmationUrl}" style="color:#3F9A5C;word-break:break-all;">${confirmationUrl}</a></p>
+    <p style="margin:0 0 24px 0;font-family:${font};font-size:13px;color:#68736c;">This link will expire in 24 hours. If you did not request this subscription, no action is needed.</p>
+    <p style="margin:0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Regards,<br>Daily Digest<br>dailydigest.in</p>
+  `;
 
   return {
     from: "Daily Digest <newsletter@dailydigest.in>",
     to: email,
     subject: "Confirm your Daily Digest subscription",
     text,
-    html: `<p style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#1e2b23;">Please confirm your Daily Digest subscription by clicking the link below.</p><p><a href="${confirmationUrl}" style="color:#3F9A5C;font-weight:700;">Confirm my subscription</a></p><p style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:13px;color:#68736c;">This link expires in 24 hours. If you did not request Daily Digest, you can safely ignore this email.</p>`,
+    html,
   };
 }
 
@@ -109,6 +121,27 @@ function randomToken() {
 async function tokenKey(token) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
   return `pending:${Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("")}`;
+}
+
+async function unsubscribeToken(env, email) {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(env.UNSUBSCRIBE_SECRET),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(email));
+  return Array.from(new Uint8Array(signature), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function timingSafeEqual(a, b) {
+  if (a.length !== b.length) return false;
+  let result = 0;
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i);
+  }
+  return result === 0;
 }
 
 async function getContact(env, email) {
@@ -216,6 +249,42 @@ async function handleConfirmation(request, env) {
   });
 }
 
+async function handleUnsubscribe(request, env) {
+  const url = new URL(request.url);
+  const email = (url.searchParams.get("email") || "").trim().toLowerCase();
+  const token = url.searchParams.get("token") || "";
+
+  if (!email || !EMAIL_REGEX.test(email) || !token) {
+    return new Response("Invalid unsubscribe link.", { status: 400, headers: corsHeaders() });
+  }
+
+  const expectedToken = await unsubscribeToken(env, email);
+  if (!timingSafeEqual(token, expectedToken)) {
+    return new Response("Invalid unsubscribe link.", { status: 400, headers: corsHeaders() });
+  }
+
+  const lookup = await getContact(env, email);
+  if (lookup.error) {
+    return new Response("We could not process your request. Please try again later.", { status: 502, headers: corsHeaders() });
+  }
+
+  if (lookup.contact && !lookup.contact.unsubscribed) {
+    const res = await resendFetch(
+      env,
+      `/audiences/${env.RESEND_AUDIENCE_ID}/contacts/${encodeURIComponent(email)}`,
+      { method: "PATCH", body: JSON.stringify({ unsubscribed: true }) }
+    );
+    if (!res.ok) {
+      console.error("Unsubscribe failed:", res.status, await res.text());
+      return new Response("We could not process your request. Please try again later.", { status: 502, headers: corsHeaders() });
+    }
+  }
+
+  return new Response("You have been unsubscribed from Daily Digest. Sorry to see you go.", {
+    headers: { "Content-Type": "text/plain; charset=UTF-8", ...corsHeaders() },
+  });
+}
+
 export default {
   async fetch(request, env) {
     if (request.method === "OPTIONS") {
@@ -223,7 +292,11 @@ export default {
     }
 
     if (request.method === "GET") {
-      if (new URL(request.url).searchParams.has("token")) {
+      const url = new URL(request.url);
+      if (url.pathname === "/unsubscribe") {
+        return handleUnsubscribe(request, env);
+      }
+      if (url.searchParams.has("token")) {
         return handleConfirmation(request, env);
       }
       const count = await getSubscriberCount(env);

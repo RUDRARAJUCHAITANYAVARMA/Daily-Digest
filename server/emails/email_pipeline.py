@@ -1,8 +1,11 @@
 import datetime
+import hashlib
+import hmac
 import html
 import logging
 import os
 import pathlib
+from urllib.parse import quote
 
 import dotenv
 import requests
@@ -16,8 +19,29 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 resend.api_key = os.getenv("RESEND_API_KEY")
+UNSUBSCRIBE_SECRET = os.getenv("UNSUBSCRIBE_SECRET")
+UNSUBSCRIBE_BASE_URL = os.getenv(
+    "UNSUBSCRIBE_BASE_URL", "https://daily-digest-subscribe.chaitanyarudraraju5210.workers.dev"
+)
 
 DEFAULT_SUBJECT = "📰 Daily Digest"
+
+
+def build_unsubscribe_url(email: str) -> str:
+    """Build a signed, one-click unsubscribe link for a recipient.
+
+    The token is an HMAC-SHA256 of the email keyed by UNSUBSCRIBE_SECRET, verified
+    by the Cloudflare Worker without needing any server-side storage.
+
+    Args:
+        email (str): Recipient email address.
+
+    Returns:
+        str: URL that unsubscribes the recipient when opened.
+    """
+
+    token = hmac.new(UNSUBSCRIBE_SECRET.encode(), email.encode(), hashlib.sha256).hexdigest()
+    return f"{UNSUBSCRIBE_BASE_URL}/unsubscribe?email={quote(email)}&token={token}"
 
 
 def build_news_cards(articles_summarized: dict) -> str:
@@ -55,12 +79,13 @@ def build_news_cards(articles_summarized: dict) -> str:
     return cards
 
 
-def build_email_html(articles_summarized: dict, preheader: str) -> str:
+def build_email_html(articles_summarized: dict, preheader: str, unsubscribe_url: str) -> str:
     """Construct the complete newsletter HTML content using a template file.
 
     Args:
         articles_summarized (dict): Dictionary of summarized articles.
         preheader (str): Short preview text shown next to the subject in inboxes.
+        unsubscribe_url (str): Signed link that unsubscribes the recipient.
 
     Returns:
         str: Complete HTML content for the newsletter.
@@ -77,6 +102,7 @@ def build_email_html(articles_summarized: dict, preheader: str) -> str:
         "{{NEWS_CONTENT}}", build_news_cards(articles_summarized)
     )
     content_html = content_html.replace("{{PREHEADER_TEXT}}", html.escape(preheader))
+    content_html = content_html.replace("{{UNSUBSCRIBE_URL}}", unsubscribe_url)
 
     return content_html
 
@@ -93,7 +119,8 @@ def send_newsletter(
         preheader (str): Short preview text shown next to the subject in inboxes.
     """
 
-    html_content = build_email_html(articles_summarized, preheader)
+    unsubscribe_url = build_unsubscribe_url(email_receiver)
+    html_content = build_email_html(articles_summarized, preheader, unsubscribe_url)
 
     resend.Emails.send(
         {
@@ -101,6 +128,7 @@ def send_newsletter(
             "to": email_receiver,
             "subject": subject,
             "html": html_content,
+            "headers": {"List-Unsubscribe": f"<{unsubscribe_url}>"},
         }
     )
 
@@ -116,6 +144,8 @@ def email_service_pipeline(articles_summarized: dict):
         audience_id = os.getenv("RESEND_AUDIENCE_ID")
         if not audience_id:
             raise ValueError("RESEND_AUDIENCE_ID environment variable is not set")
+        if not UNSUBSCRIBE_SECRET:
+            raise ValueError("UNSUBSCRIBE_SECRET environment variable is not set")
 
         logger.info("Fetching subscriber emails from Resend audience...")
         response = requests.get(
