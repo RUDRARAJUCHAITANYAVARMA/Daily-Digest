@@ -17,6 +17,36 @@ function json(body, status = 200) {
   });
 }
 
+function htmlPage(heading, message, status = 200) {
+  const font = "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif";
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Daily Digest</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f2ec;font-family:${font};">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="padding:48px 16px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:440px;background:#ffffff;border-radius:12px;padding:40px 32px;text-align:center;">
+          <tr><td style="font-size:13px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:#3F9A5C;padding-bottom:20px;">Daily Digest</td></tr>
+          <tr><td style="font-size:19px;font-weight:700;color:#1e2b23;padding-bottom:12px;">${heading}</td></tr>
+          <tr><td style="font-size:15px;line-height:1.6;color:#3f473f;padding-bottom:24px;">${message}</td></tr>
+          <tr><td><a href="https://dailydigest.in" style="color:#3F9A5C;font-size:13px;text-decoration:none;font-weight:600;">dailydigest.in</a></td></tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+  return new Response(html, {
+    status,
+    headers: { "Content-Type": "text/html; charset=UTF-8", ...corsHeaders() },
+  });
+}
+
 async function resendFetch(env, path, options = {}) {
   return fetch(`https://api.resend.com${path}`, {
     ...options,
@@ -76,7 +106,7 @@ async function sendWelcomeEmail(env, email) {
 function confirmationEmailPayload(email, confirmationUrl) {
   const text =
     "Hello,\n\n" +
-    "Thank you for subscribing to Daily Digest — the ten stories that matter most, summarized in three sentences each, delivered to your inbox every morning at 7:30 AM IST.\n\n" +
+    "Thank you for subscribing to Daily Digest, delivered to your inbox every morning at 7:30 AM IST.\n\n" +
     "Please confirm your subscription using the link below:\n" +
     confirmationUrl +
     "\n\nThis link will expire in 24 hours. If you did not request this subscription, no action is needed.\n\n" +
@@ -87,9 +117,8 @@ function confirmationEmailPayload(email, confirmationUrl) {
   const font = "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif";
   const html = `
     <p style="margin:0 0 16px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Hello,</p>
-    <p style="margin:0 0 24px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Thank you for subscribing to Daily Digest — the ten stories that matter most, summarized in three sentences each, delivered to your inbox every morning at 7:30 AM IST.</p>
-    <p style="margin:0 0 16px 0;"><a href="${confirmationUrl}" style="display:inline-block;background:#3F9A5C;color:#ffffff;font-family:${font};font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:6px;">Confirm Subscription</a></p>
-    <p style="margin:0 0 24px 0;font-family:${font};font-size:13px;color:#68736c;">If the button above does not work, copy and paste this link into your browser:<br><a href="${confirmationUrl}" style="color:#3F9A5C;word-break:break-all;">${confirmationUrl}</a></p>
+    <p style="margin:0 0 24px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Thank you for subscribing to Daily Digest, delivered to your inbox every morning at 7:30 AM IST.</p>
+    <p style="margin:0 0 24px 0;"><a href="${confirmationUrl}" style="display:inline-block;background:#3F9A5C;color:#ffffff;font-family:${font};font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:6px;">Confirm Subscription</a></p>
     <p style="margin:0 0 24px 0;font-family:${font};font-size:13px;color:#68736c;">This link will expire in 24 hours. If you did not request this subscription, no action is needed.</p>
     <p style="margin:0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Regards,<br>Daily Digest<br>dailydigest.in</p>
   `;
@@ -204,18 +233,18 @@ async function handleSubscribe(request, env) {
 async function handleConfirmation(request, env) {
   const token = new URL(request.url).searchParams.get("token");
   if (!token || !/^[a-f0-9]{64}$/.test(token)) {
-    return new Response("Invalid or expired confirmation link.", { status: 400, headers: corsHeaders() });
+    return htmlPage("Link expired", "This confirmation link is invalid or has expired. Please subscribe again to get a new one.", 400);
   }
 
   const key = await tokenKey(token);
   const pending = await env.PENDING_SUBSCRIPTIONS.get(key, "json");
   if (!pending || pending.expiresAt < Date.now()) {
-    return new Response("Invalid or expired confirmation link.", { status: 400, headers: corsHeaders() });
+    return htmlPage("Link expired", "This confirmation link is invalid or has expired. Please subscribe again to get a new one.", 400);
   }
 
   const lookup = await getContact(env, pending.email);
   if (lookup.error) {
-    return new Response("We could not confirm your subscription. Please try again later.", { status: 502, headers: corsHeaders() });
+    return htmlPage("Something went wrong", "We could not confirm your subscription. Please try again later.", 502);
   }
 
   let contactResponse;
@@ -236,17 +265,15 @@ async function handleConfirmation(request, env) {
 
   if (!contactResponse.ok) {
     console.error("Contact confirmation failed:", contactResponse.status, await contactResponse.text());
-    return new Response("We could not confirm your subscription. Please try again later.", { status: 502, headers: corsHeaders() });
+    return htmlPage("Something went wrong", "We could not confirm your subscription. Please try again later.", 502);
   }
 
   await env.PENDING_SUBSCRIPTIONS.delete(key);
   if (!(await sendWelcomeEmail(env, pending.email))) {
-    return new Response("Your subscription is confirmed, but the welcome email could not be sent.", { status: 502, headers: corsHeaders() });
+    return htmlPage("You're subscribed", "Your subscription is confirmed, but the welcome email could not be sent.", 502);
   }
 
-  return new Response("Subscription confirmed. Your first Daily Digest arrives tomorrow.", {
-    headers: { "Content-Type": "text/plain; charset=UTF-8", ...corsHeaders() },
-  });
+  return htmlPage("You're subscribed!", "Your first Daily Digest arrives tomorrow morning.");
 }
 
 async function handleUnsubscribe(request, env) {
@@ -255,17 +282,17 @@ async function handleUnsubscribe(request, env) {
   const token = url.searchParams.get("token") || "";
 
   if (!email || !EMAIL_REGEX.test(email) || !token) {
-    return new Response("Invalid unsubscribe link.", { status: 400, headers: corsHeaders() });
+    return htmlPage("Invalid link", "This unsubscribe link is invalid.", 400);
   }
 
   const expectedToken = await unsubscribeToken(env, email);
   if (!timingSafeEqual(token, expectedToken)) {
-    return new Response("Invalid unsubscribe link.", { status: 400, headers: corsHeaders() });
+    return htmlPage("Invalid link", "This unsubscribe link is invalid.", 400);
   }
 
   const lookup = await getContact(env, email);
   if (lookup.error) {
-    return new Response("We could not process your request. Please try again later.", { status: 502, headers: corsHeaders() });
+    return htmlPage("Something went wrong", "We could not process your request. Please try again later.", 502);
   }
 
   if (lookup.contact && !lookup.contact.unsubscribed) {
@@ -276,13 +303,11 @@ async function handleUnsubscribe(request, env) {
     );
     if (!res.ok) {
       console.error("Unsubscribe failed:", res.status, await res.text());
-      return new Response("We could not process your request. Please try again later.", { status: 502, headers: corsHeaders() });
+      return htmlPage("Something went wrong", "We could not process your request. Please try again later.", 502);
     }
   }
 
-  return new Response("You have been unsubscribed from Daily Digest. Sorry to see you go.", {
-    headers: { "Content-Type": "text/plain; charset=UTF-8", ...corsHeaders() },
-  });
+  return htmlPage("Unsubscribed", "You've been unsubscribed from Daily Digest. Sorry to see you go.");
 }
 
 export default {
