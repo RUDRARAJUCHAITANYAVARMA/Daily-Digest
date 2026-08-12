@@ -106,7 +106,7 @@ async function sendWelcomeEmail(env, email) {
 function confirmationEmailPayload(email, confirmationUrl) {
   const text =
     "Hey,\n\n" +
-    "Thank you for subscribing to Daily Digest. You're one step away from getting your first Daily Digest tomorrow — just confirm your subscription using the link: " +
+    "Thanks for subscribing to Daily Digest! One last step: confirm your subscription and your first digest arrives tomorrow: " +
     confirmationUrl +
     "\n\nThis link will expire in 24 hours. If you did not request this subscription, no action is needed.\n\n" +
     "Regards,\n" +
@@ -116,7 +116,7 @@ function confirmationEmailPayload(email, confirmationUrl) {
   const font = "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif";
   const html = `
     <p style="margin:0 0 16px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Hey,</p>
-    <p style="margin:0 0 24px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Thank you for subscribing to Daily Digest. You're one step away from getting your first Daily Digest tomorrow — just confirm your subscription using the link: <a href="${confirmationUrl}" style="color:#3F9A5C;font-weight:700;text-decoration:underline;">Confirm my subscription</a>.</p>
+    <p style="margin:0 0 24px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Thanks for subscribing to Daily Digest! One last step: confirm your subscription and your first digest arrives tomorrow: <a href="${confirmationUrl}" style="color:#3F9A5C;font-weight:700;text-decoration:underline;">Confirm my subscription</a>.</p>
     <p style="margin:0 0 24px 0;font-family:${font};font-size:13px;color:#68736c;">This link will expire in 24 hours. If you did not request this subscription, no action is needed.</p>
     <p style="margin:0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Regards,<br>Daily Digest<br>dailydigest.in</p>
   `;
