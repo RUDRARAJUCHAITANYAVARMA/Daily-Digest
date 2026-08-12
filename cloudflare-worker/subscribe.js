@@ -105,9 +105,8 @@ async function sendWelcomeEmail(env, email) {
 
 function confirmationEmailPayload(email, confirmationUrl) {
   const text =
-    "Hello,\n\n" +
-    "Thank you for subscribing to Daily Digest, delivered to your inbox every morning at 7:30 AM IST.\n\n" +
-    "Please confirm your subscription using the link below:\n" +
+    "Hey,\n\n" +
+    "Thank you for subscribing to Daily Digest. Please confirm your Daily Digest subscription by clicking the link below.\n\n" +
     confirmationUrl +
     "\n\nThis link will expire in 24 hours. If you did not request this subscription, no action is needed.\n\n" +
     "Regards,\n" +
@@ -116,9 +115,9 @@ function confirmationEmailPayload(email, confirmationUrl) {
 
   const font = "-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif";
   const html = `
-    <p style="margin:0 0 16px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Hello,</p>
-    <p style="margin:0 0 24px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Thank you for subscribing to Daily Digest, delivered to your inbox every morning at 7:30 AM IST.</p>
-    <p style="margin:0 0 24px 0;"><a href="${confirmationUrl}" style="display:inline-block;background:#3F9A5C;color:#ffffff;font-family:${font};font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:6px;">Confirm Subscription</a></p>
+    <p style="margin:0 0 16px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Hey,</p>
+    <p style="margin:0 0 24px 0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Thank you for subscribing to Daily Digest. Please confirm your Daily Digest subscription by clicking the link below.</p>
+    <p style="margin:0 0 24px 0;"><a href="${confirmationUrl}" style="display:inline-block;background:#3F9A5C;color:#ffffff;font-family:${font};font-size:15px;font-weight:700;text-decoration:none;padding:12px 24px;border-radius:6px;">Confirm my subscription</a></p>
     <p style="margin:0 0 24px 0;font-family:${font};font-size:13px;color:#68736c;">This link will expire in 24 hours. If you did not request this subscription, no action is needed.</p>
     <p style="margin:0;font-family:${font};font-size:15px;line-height:1.6;color:#1e2b23;">Regards,<br>Daily Digest<br>dailydigest.in</p>
   `;
