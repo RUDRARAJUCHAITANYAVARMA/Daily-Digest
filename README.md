@@ -8,8 +8,8 @@ flowchart TD
     subgraph Signup["Signup flow"]
         Visitor(["Visitor"]) -->|"enters email"| Site["index.html — GitHub Pages\n(dailydigest.in)"]
         Site -->|"GET count / POST email"| Worker["Cloudflare Worker\ncloudflare-worker/subscribe.js"]
-        Worker -->|"add / resubscribe contact"| Audience[("Resend Audience\n(subscriber list)")]
-        Worker -->|"send welcome email"| Resend["Resend\n(email API)"]
+        Worker -->|"send confirmation email"| Resend["Resend\n(email API)"]
+        Worker -->|"after confirmation"| Audience[("Resend Audience\n(subscriber list)")]
     end
 
     subgraph Daily["Daily digest pipeline"]
@@ -29,6 +29,6 @@ flowchart TD
     style Resend fill:#f5e6d3,stroke:#8B3A2E
 ```
 
-**Signup flow:** a visitor enters their email on the site (hosted on GitHub Pages under `dailydigest.in`), which calls a Cloudflare Worker. The Worker adds the contact to a Resend Audience and sends a personalized welcome email via Resend.
+**Signup flow:** a visitor enters their email on the site (hosted on GitHub Pages under `dailydigest.in`), which calls a Cloudflare Worker. The Worker sends a confirmation email first. Only after the visitor opens the single-use confirmation link does the Worker add or reactivate the contact in the Resend Audience and send the personalized welcome email.
 
 **Daily digest pipeline:** cron-job.org triggers the GitHub Actions workflow once a day (GitHub's own built-in `schedule:` trigger is unreliable, so an external scheduler calls `workflow_dispatch` on the Actions API instead). The workflow runs `pipeline.py`, which fetches the day's headlines, stores them temporarily in SQLite, summarizes the top 10 with an LLM, then emails the digest to every active subscriber pulled from the same Resend Audience.

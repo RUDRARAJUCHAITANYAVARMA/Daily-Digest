@@ -1,3 +1,10 @@
 name = "daily-digest-subscribe"
 main = "subscribe.js"
 compatibility_date = "2026-08-06"
+
+[[kv_namespaces]]
+binding = "PENDING_SUBSCRIPTIONS"
+id = "d4773744c2c3406b8e6cc0f16f07d0ce"
+
+[vars]
+CONFIRMATION_BASE_URL = "https://daily-digest-subscribe.chaitanyarudraraju5210.workers.dev"

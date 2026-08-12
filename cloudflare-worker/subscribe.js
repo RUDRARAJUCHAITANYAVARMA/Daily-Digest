@@ -1,5 +1,6 @@
 const ALLOWED_ORIGIN = "https://dailydigest.in";
 const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+\.[a-zA-Z]{2,}$/;
+const PENDING_SUBSCRIPTION_TTL = 24 * 60 * 60;
 
 function corsHeaders() {
   return {
@@ -68,9 +69,56 @@ async function sendWelcomeEmail(env, email) {
     method: "POST",
     body: JSON.stringify(welcomeEmailPayload(email)),
   });
-  if (!res.ok) {
-    console.error("Welcome email failed:", await res.text());
-  }
+  if (!res.ok) console.error("Welcome email failed:", await res.text());
+  return res.ok;
+}
+
+function confirmationEmailPayload(email, confirmationUrl) {
+  const text =
+    "Hey,\n\n" +
+    "Please confirm your Daily Digest subscription by opening this link:\n" +
+    confirmationUrl +
+    "\n\nThis link expires in 24 hours. If you did not request Daily Digest, you can safely ignore this email.\n\n" +
+    "Chaitanya\n" +
+    "dailydigest.in";
+
+  return {
+    from: "Daily Digest <newsletter@dailydigest.in>",
+    to: email,
+    subject: "Confirm your Daily Digest subscription",
+    text,
+    html: `<p style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:15px;line-height:1.6;color:#1e2b23;">Please confirm your Daily Digest subscription by clicking the link below.</p><p><a href="${confirmationUrl}" style="color:#3F9A5C;font-weight:700;">Confirm my subscription</a></p><p style="font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:13px;color:#68736c;">This link expires in 24 hours. If you did not request Daily Digest, you can safely ignore this email.</p>`,
+  };
+}
+
+async function sendConfirmationEmail(env, email, confirmationUrl) {
+  const res = await resendFetch(env, "/emails", {
+    method: "POST",
+    body: JSON.stringify(confirmationEmailPayload(email, confirmationUrl)),
+  });
+  if (!res.ok) console.error("Confirmation email failed:", await res.text());
+  return res.ok;
+}
+
+function randomToken() {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function tokenKey(token) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(token));
+  return `pending:${Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("")}`;
+}
+
+async function getContact(env, email) {
+  const res = await resendFetch(
+    env,
+    `/audiences/${env.RESEND_AUDIENCE_ID}/contacts/${encodeURIComponent(email)}`
+  );
+  if (res.status === 404) return { contact: null };
+  if (!res.ok) return { error: true };
+  return { contact: await res.json() };
 }
 
 async function handleSubscribe(request, env) {
@@ -86,39 +134,86 @@ async function handleSubscribe(request, env) {
     return json({ success: false, message: "Invalid email address." }, 400);
   }
 
-  const existing = await resendFetch(
-    env,
-    `/audiences/${env.RESEND_AUDIENCE_ID}/contacts/${encodeURIComponent(email)}`
-  );
-
-  if (existing.status === 200) {
-    const contact = await existing.json();
-    if (!contact.unsubscribed) {
-      return json({ success: false, message: "This email is already subscribed." });
-    }
-    const patch = await resendFetch(
-      env,
-      `/audiences/${env.RESEND_AUDIENCE_ID}/contacts/${encodeURIComponent(email)}`,
-      { method: "PATCH", body: JSON.stringify({ unsubscribed: false }) }
-    );
-    if (!patch.ok) {
-      return json({ success: false, message: "Something went wrong. Please try again." }, 502);
-    }
-    await sendWelcomeEmail(env, email);
-    return json({ success: true, message: "Successfully subscribed." });
-  }
-
-  const create = await resendFetch(env, `/audiences/${env.RESEND_AUDIENCE_ID}/contacts`, {
-    method: "POST",
-    body: JSON.stringify({ email, unsubscribed: false }),
-  });
-
-  if (!create.ok) {
+  const lookup = await getContact(env, email);
+  if (lookup.error) {
     return json({ success: false, message: "Something went wrong. Please try again." }, 502);
   }
 
-  await sendWelcomeEmail(env, email);
-  return json({ success: true, message: "Successfully subscribed." });
+  if (lookup.contact) {
+    const contact = lookup.contact;
+    if (!contact.unsubscribed) {
+      return json({ success: false, message: "This email is already subscribed." });
+    }
+  }
+
+  const token = randomToken();
+  const key = await tokenKey(token);
+  const expiresAt = Date.now() + PENDING_SUBSCRIPTION_TTL * 1000;
+  try {
+    await env.PENDING_SUBSCRIPTIONS.put(key, JSON.stringify({ email, expiresAt }), {
+      expirationTtl: PENDING_SUBSCRIPTION_TTL,
+    });
+  } catch (error) {
+    console.error("Pending subscription storage failed:", error);
+    return json({ success: false, message: "Something went wrong. Please try again." }, 502);
+  }
+
+  const baseUrl = (env.CONFIRMATION_BASE_URL || new URL(request.url).origin).replace(/\/$/, "");
+  const confirmationUrl = `${baseUrl}/confirm?token=${token}`;
+  if (!(await sendConfirmationEmail(env, email, confirmationUrl))) {
+    await env.PENDING_SUBSCRIPTIONS.delete(key);
+    return json({ success: false, message: "We could not send the confirmation email. Please try again." }, 502);
+  }
+
+  return json({ success: true, message: "Check your inbox to confirm your subscription." });
+}
+
+async function handleConfirmation(request, env) {
+  const token = new URL(request.url).searchParams.get("token");
+  if (!token || !/^[a-f0-9]{64}$/.test(token)) {
+    return new Response("Invalid or expired confirmation link.", { status: 400, headers: corsHeaders() });
+  }
+
+  const key = await tokenKey(token);
+  const pending = await env.PENDING_SUBSCRIPTIONS.get(key, "json");
+  if (!pending || pending.expiresAt < Date.now()) {
+    return new Response("Invalid or expired confirmation link.", { status: 400, headers: corsHeaders() });
+  }
+
+  const lookup = await getContact(env, pending.email);
+  if (lookup.error) {
+    return new Response("We could not confirm your subscription. Please try again later.", { status: 502, headers: corsHeaders() });
+  }
+
+  let contactResponse;
+  if (!lookup.contact) {
+    contactResponse = await resendFetch(env, `/audiences/${env.RESEND_AUDIENCE_ID}/contacts`, {
+      method: "POST",
+      body: JSON.stringify({ email: pending.email, unsubscribed: false }),
+    });
+  } else if (lookup.contact.unsubscribed) {
+    contactResponse = await resendFetch(
+      env,
+      `/audiences/${env.RESEND_AUDIENCE_ID}/contacts/${encodeURIComponent(pending.email)}`,
+      { method: "PATCH", body: JSON.stringify({ unsubscribed: false }) }
+    );
+  } else {
+    contactResponse = new Response(null, { status: 200 });
+  }
+
+  if (!contactResponse.ok) {
+    console.error("Contact confirmation failed:", contactResponse.status, await contactResponse.text());
+    return new Response("We could not confirm your subscription. Please try again later.", { status: 502, headers: corsHeaders() });
+  }
+
+  await env.PENDING_SUBSCRIPTIONS.delete(key);
+  if (!(await sendWelcomeEmail(env, pending.email))) {
+    return new Response("Your subscription is confirmed, but the welcome email could not be sent.", { status: 502, headers: corsHeaders() });
+  }
+
+  return new Response("Subscription confirmed. Your first Daily Digest arrives tomorrow.", {
+    headers: { "Content-Type": "text/plain; charset=UTF-8", ...corsHeaders() },
+  });
 }
 
 export default {
@@ -128,6 +223,9 @@ export default {
     }
 
     if (request.method === "GET") {
+      if (new URL(request.url).searchParams.has("token")) {
+        return handleConfirmation(request, env);
+      }
       const count = await getSubscriberCount(env);
       return json({ success: true, count });
     }
